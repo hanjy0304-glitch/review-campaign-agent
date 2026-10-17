@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r requirements.txt playwright
+      - run: pip install -r requirements.txt playwright==1.49.0
       - run: playwright install --with-deps chromium
       - env:
           TARGET_URL: ${{ inputs.url }}

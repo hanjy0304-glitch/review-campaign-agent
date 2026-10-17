@@ -73,6 +73,7 @@ def summarize(url: str, sites: list[Site], transport: httpx.BaseTransport | None
     check_allowed(url, sites)
     with httpx.Client(transport=transport, timeout=TIMEOUT, headers={"User-Agent": USER_AGENT}) as client:
         resp = client.get(url, follow_redirects=True)
+    check_allowed(str(resp.url), sites)  # 다른 도메인으로 이동했으면 내용을 요약하지 않는다
     return _format(f"HTTP {resp.status_code}", str(resp.url), resp.text)
 
 
@@ -86,8 +87,9 @@ def summarize_rendered(url: str, sites: list[Site]) -> str:
         page = browser.new_page(user_agent=USER_AGENT)
         resp = page.goto(url, wait_until="networkidle", timeout=int(TIMEOUT * 2000))
         html, final, status = page.content(), page.url, resp.status if resp else "?"
-        frames = [f.url for f in page.frames[1:]]
+        frames = sorted({urlparse(f.url).hostname or "-" for f in page.frames[1:]})
         browser.close()
+    check_allowed(final, sites)
     out = _format(f"HTTP {status} (브라우저)", final, html)
     return out + ("\n프레임: " + ", ".join(frames) if frames else "")
 
