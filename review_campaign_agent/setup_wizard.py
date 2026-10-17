@@ -98,6 +98,7 @@ def write_config(cfg: dict, sites: Sequence[Site], out_path: Path, say: Say) -> 
     say("비밀번호·토큰은 이 파일이나 채팅에 적지 말고, 값은 직접 입력하세요.\n")
     for name in required_env_vars(list(sites)):
         say(f"  {name}")
+    say("\n연결 방법: docs/notion-setup.md (Notion 표 만들기), docs/telegram-setup.md (텔레그램 봇)")
     manual = [s.name for s in sites if not s.auto_collect]
     if manual:
         say(f"\n자동 수집이 아직 없는 사이트: {', '.join(manual)}")

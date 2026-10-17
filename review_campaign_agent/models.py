@@ -13,7 +13,7 @@ class Status(str, Enum):
 
 @dataclass
 class Campaign:
-    site: str
+    site: str  # 카탈로그 key. Notion 에 직접 입력한 건은 "manual"
     campaign_id: str
     title: str
     status: Status
@@ -23,6 +23,9 @@ class Campaign:
     review_deadline: date | None = None
     url: str = ""
     notified: set[str] = field(default_factory=set)
+    site_name: str = ""  # 화면에 보여줄 사이트 이름
+    ref: str = ""  # 저장소(Notion) 행 id
+    shown_days_left: int | None = None  # Notion 에 현재 표시된 남은 일수
 
     @property
     def key(self) -> str:
