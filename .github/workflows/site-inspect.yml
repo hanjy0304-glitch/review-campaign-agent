@@ -1,0 +1,24 @@
+name: 사이트 화면 구조 확인
+
+# Actions 탭 → 왼쪽 "사이트 화면 구조 확인" → Run workflow. 주소 칸에 카탈로그 사이트의 https 주소를 넣습니다.
+# 로그인 없이 볼 수 있는 공개 페이지의 폼·입력칸·로그인 링크만 요약해 로그에 보여 줍니다.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "확인할 주소 (예: https://reviewnote.co.kr/)"
+        type: string
+        default: "https://reviewnote.co.kr/"
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - env:
+          TARGET_URL: ${{ inputs.url }}
+        run: python -m review_campaign_agent inspect "$TARGET_URL"
