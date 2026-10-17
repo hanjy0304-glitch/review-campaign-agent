@@ -1,0 +1,46 @@
+name: run
+
+# 한국시간 09:00(요약 포함)과 18:00 에 실행. GitHub cron 은 UTC 기준입니다.
+# 시각을 바꾸려면 아래 cron 을 수정하세요. (UTC = 한국시간 - 9시간)
+on:
+  schedule:
+    - cron: "0 0 * * *"   # 한국시간 09:00
+    - cron: "0 9 * * *"   # 한국시간 18:00
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "보내지 않고 미리보기만"
+        type: boolean
+        default: true
+
+concurrency:
+  group: run
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          USER_CONFIG: ${{ secrets.USER_CONFIG }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: |
+          if [ -z "$NOTION_TOKEN" ]; then
+            echo "NOTION_TOKEN Secret 이 설정되지 않아 건너뜁니다. docs/notion-setup.md 를 참고하세요."
+            exit 0
+          fi
+          args=""
+          # 한국시간 정오 전 실행에만 오늘의 할 일 요약을 붙인다
+          [ "$(TZ=Asia/Seoul date +%H)" -lt 12 ] && args="$args --summary"
+          [ "$DRY_RUN" = "true" ] && args="$args --dry-run"
+          python -m review_campaign_agent run $args
