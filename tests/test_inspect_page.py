@@ -23,3 +23,10 @@ def test_summarize_finds_login_parts():
 def test_rejects_unlisted_or_insecure(url):
     with pytest.raises(ValueError):
         summarize(url, SITES)
+
+
+def test_summarize_lists_buttons_and_images():
+    html = '<button> 네이버 로그인 </button><img alt="카카오 로그인" src="x.png">'
+    out = summarize("https://ok.example/", SITES, transport=httpx.MockTransport(lambda r: httpx.Response(200, text=html)))
+    assert "button 네이버 로그인" in out
+    assert "img alt=카카오 로그인" in out

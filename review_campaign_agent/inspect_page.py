@@ -23,6 +23,8 @@ class _Summary(HTMLParser):
         self.links: list[tuple[str, str]] = []
         self.forms: list[dict] = []
         self.inputs: list[str] = []
+        self.buttons: list[str] = []
+        self._button_text: list[str] | None = None
         self._in_title = False
         self._link_href: str | None = None
         self._link_text: list[str] = []
@@ -35,12 +37,19 @@ class _Summary(HTMLParser):
             self._link_href, self._link_text = a["href"], []
         elif tag == "form":
             self.forms.append({"action": a.get("action") or "", "method": (a.get("method") or "get").lower()})
+        elif tag == "button":
+            self._button_text = []
+        elif tag == "img" and a.get("alt"):
+            self.buttons.append(f"img alt={a['alt'][:30]}")
         elif tag == "input":
             self.inputs.append(f"type={a.get('type') or 'text'} name={a.get('name') or '-'} id={a.get('id') or '-'}")
 
     def handle_endtag(self, tag):
         if tag == "title":
             self._in_title = False
+        elif tag == "button" and self._button_text is not None:
+            self.buttons.append("button " + " ".join("".join(self._button_text).split())[:30])
+            self._button_text = None
         elif tag == "a" and self._link_href is not None:
             self.links.append((" ".join("".join(self._link_text).split())[:30], self._link_href))
             self._link_href = None
@@ -50,6 +59,8 @@ class _Summary(HTMLParser):
             self.title += data
         if self._link_href is not None:
             self._link_text.append(data)
+        if self._button_text is not None:
+            self._button_text.append(data)
 
 
 def check_allowed(url: str, sites: list[Site]) -> None:
@@ -62,9 +73,32 @@ def summarize(url: str, sites: list[Site], transport: httpx.BaseTransport | None
     check_allowed(url, sites)
     with httpx.Client(transport=transport, timeout=TIMEOUT, headers={"User-Agent": USER_AGENT}) as client:
         resp = client.get(url, follow_redirects=True)
+    check_allowed(str(resp.url), sites)  # 다른 도메인으로 이동했으면 내용을 요약하지 않는다
+    return _format(f"HTTP {resp.status_code}", str(resp.url), resp.text)
+
+
+def summarize_rendered(url: str, sites: list[Site]) -> str:
+    """실제 브라우저로 열어 자바스크립트가 그린 뒤의 화면 구조를 요약한다 (playwright 필요)."""
+    from playwright.sync_api import sync_playwright
+
+    check_allowed(url, sites)
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page(user_agent=USER_AGENT)
+        resp = page.goto(url, wait_until="networkidle", timeout=int(TIMEOUT * 2000))
+        html, final, status = page.content(), page.url, resp.status if resp else "?"
+        frames = sorted({urlparse(f.url).hostname or "-" for f in page.frames[1:]})
+        browser.close()
+    check_allowed(final, sites)
+    out = _format(f"HTTP {status} (브라우저)", final, html)
+    return out + ("\n프레임: " + ", ".join(frames) if frames else "")
+
+
+def _format(status: str, final_url: str, html: str) -> str:
     parser = _Summary()
-    parser.feed(resp.text)
-    lines = [f"HTTP {resp.status_code}  최종 주소: {resp.url}  제목: {' '.join(parser.title.split())}"]
+    parser.feed(html)
+    lines = [f"{status}  최종 주소: {final_url}  제목: {' '.join(parser.title.split())}"]
+    lines.append(f"버튼·이미지 {len(parser.buttons)}개: {parser.buttons[:30]}")
     lines.append(f"폼 {len(parser.forms)}개: {parser.forms}")
     lines.append(f"입력칸 {len(parser.inputs)}개:")
     lines += [f"  {i}" for i in parser.inputs[:30]]
@@ -72,6 +106,6 @@ def summarize(url: str, sites: list[Site], transport: httpx.BaseTransport | None
     shown = 0
     for text, href in parser.links:
         if any(h in (text + href).lower() for h in LOGIN_HINTS) and shown < MAX_LINKS:
-            lines.append(f"  [{text}] {urljoin(str(resp.url), href)}")
+            lines.append(f"  [{text}] {urljoin(final_url, href)}")
             shown += 1
     return "\n".join(lines)

@@ -1,6 +1,8 @@
 name: 사이트 화면 구조 확인
 
-# Actions 탭 → 왼쪽 "사이트 화면 구조 확인" → Run workflow. 주소 칸에 카탈로그 사이트의 https 주소를 넣습니다.
+# 두 가지 방법으로 실행됩니다.
+# 1) Actions 탭 → "사이트 화면 구조 확인" → Run workflow (주소 칸에 입력)
+# 2) config/inspect_targets.txt 를 고쳐 push 하면 목록의 주소를 자동 확인 (개발용)
 # 로그인 없이 볼 수 있는 공개 페이지의 폼·입력칸·로그인 링크만 요약해 로그에 보여 줍니다.
 on:
   workflow_dispatch:
@@ -9,6 +11,9 @@ on:
         description: "확인할 주소 (예: https://reviewnote.co.kr/)"
         type: string
         default: "https://reviewnote.co.kr/"
+  push:
+    branches: ["claude/**"]
+    paths: ["config/inspect_targets.txt"]
 
 jobs:
   inspect:
@@ -18,7 +23,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt playwright==1.49.0
+      - run: playwright install --with-deps chromium
       - env:
           TARGET_URL: ${{ inputs.url }}
-        run: python -m review_campaign_agent inspect "$TARGET_URL"
+        run: |
+          if [ -n "$TARGET_URL" ]; then
+            python -m review_campaign_agent inspect --browser "$TARGET_URL"
+          else
+            grep -v '^#' config/inspect_targets.txt | grep -v '^$' | while read -r url; do
+              echo "=== $url"
+              python -m review_campaign_agent inspect --browser "$url" || true
+            done
+          fi
