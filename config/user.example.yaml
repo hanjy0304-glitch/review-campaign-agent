@@ -13,13 +13,16 @@ channels:
 timezone: Asia/Seoul
 
 # 내가 쓰는 체험단 사이트만 고르세요 (config/sites.yaml 의 key 중 선택).
-# `python -m setup` 을 실행하면 목록에서 체크해서 이 항목을 자동으로 채워줍니다.
+# `python -m review_campaign_agent setup` 을 실행하면 목록에서 체크해서 이 항목을 자동으로 채워줍니다.
 enabled_sites:
   - example_site_a
   - example_site_b
 
-# 카탈로그에 없는 사이트는 직접 추가 (어댑터 작성 필요, CONTRIBUTING 참고)
+# 카탈로그에 없는 사이트는 직접 추가 (자동 수집은 어댑터 작성 필요, 없으면 수동 입력 모드)
 custom_sites: []
+#  - key: mysite
+#    name: 내 체험단 사이트
+#    domain: example.co.kr
 
 notify:
   run_times: ["09:00", "18:00"]   # 점검 시각 (로컬 시간)
