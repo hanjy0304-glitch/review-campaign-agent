@@ -23,15 +23,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt playwright
+      - run: playwright install --with-deps chromium
       - env:
           TARGET_URL: ${{ inputs.url }}
         run: |
           if [ -n "$TARGET_URL" ]; then
-            python -m review_campaign_agent inspect "$TARGET_URL"
+            python -m review_campaign_agent inspect --browser "$TARGET_URL"
           else
             grep -v '^#' config/inspect_targets.txt | grep -v '^$' | while read -r url; do
               echo "=== $url"
-              python -m review_campaign_agent inspect "$url" || true
+              python -m review_campaign_agent inspect --browser "$url" || true
             done
           fi

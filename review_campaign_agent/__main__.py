@@ -7,7 +7,7 @@ from .catalog import CONFIG_DIR, load_catalog
 from .config import ConfigError, load_user_config, notify_days, required_env_vars, resolve_sites
 from .envfile import load_dotenv
 from .notion_store import NotionClient, NotionError, NotionStore, create_database, parse_notion_id
-from .inspect_page import summarize
+from .inspect_page import summarize, summarize_rendered
 from .probe import format_results, probe_sites
 from .rules import today_kst
 from .setup_wizard import parse_days, run_setup, run_setup_noninteractive
@@ -120,9 +120,12 @@ def _probe() -> int:
 
 def _inspect(args: argparse.Namespace) -> int:
     try:
-        print(summarize(args.url, load_catalog()))
+        print((summarize_rendered if args.browser else summarize)(args.url, load_catalog()))
     except (ValueError, httpx.HTTPError) as e:
         print(e if isinstance(e, ValueError) else type(e).__name__)
+        return 1
+    except Exception as e:  # playwright 오류 등. 메시지에 주소 외 개인 정보는 없다
+        print(type(e).__name__, str(e).splitlines()[0][:200])
         return 1
     return 0
 
@@ -168,6 +171,7 @@ def main() -> int:
     sub.add_parser("probe", help="로그인 없이 카탈로그 사이트 접속 가능 여부 확인")
     ins = sub.add_parser("inspect", help="로그인 없이 볼 수 있는 공개 페이지의 구조 요약")
     ins.add_argument("url", help="카탈로그 사이트의 https 주소")
+    ins.add_argument("--browser", action="store_true", help="실제 브라우저로 열어 자바스크립트 실행 후 구조 확인")
     run = sub.add_parser("run", help="Notion 을 읽어 오늘 알림 보내기")
     run.add_argument("--dry-run", action="store_true", help="보내거나 기록하지 않고 내용만 출력")
     run.add_argument("--summary", action="store_true", help="오늘의 할 일 요약도 보내기 (아침 실행용)")
