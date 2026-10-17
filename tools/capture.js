@@ -5,9 +5,9 @@
   // 아래 길이 이하의 짧은 글자(상태·유형 등)와 날짜·D-day 는 남긴다
   var KEEP_MAX = 8;
   var KEEP_RE = /^(D[-+]\d+|\d{1,4}[.\-\/]\d{1,2}([.\-\/]\d{1,2})?)$/;
-  var SKIP = { SCRIPT: 1, STYLE: 1, SVG: 1, NOSCRIPT: 1, IFRAME: 1 };
-  // 카드 크기로 볼 최대 글자 수
-  var MAX_TEXT = 1500;
+  var SKIP = { SCRIPT: 1, STYLE: 1, SVG: 1, NOSCRIPT: 1, IFRAME: 1, HEADER: 1, NAV: 1, FOOTER: 1, ASIDE: 1, SELECT: 1 };
+  // 위로 올라가다 아래 요소를 포함한 덩어리에서 멈춘다 (메뉴·필터·검색칸이 섞인 영역은 카드가 아님)
+  var STOP = "select,nav,header,footer,aside,input,form";
 
   function maskText(t) {
     t = t.replace(/\s+/g, " ").trim();
@@ -41,7 +41,7 @@
   }
   function pick(target) {
     var el = target;
-    while (el.parentElement && el.parentElement !== document.body && el.parentElement.innerText.length < MAX_TEXT) {
+    while (el.parentElement && el.parentElement !== document.body && !el.parentElement.querySelector(STOP)) {
       el = el.parentElement;
     }
     return el;
