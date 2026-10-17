@@ -1,0 +1,169 @@
+# 지원 체험단 사이트 카탈로그. 공개 정보만 기재 (계정·비밀번호·개인 URL 금지).
+# domain_verified: true  = 웹 검색 결과에서 사이트 자체/앱스토어 등록 정보로 확인됨 (직접 접속 테스트는 아님)
+#                  false = 간접 근거뿐. 사용 전 직접 접속해 확인.
+# login_type: unknown | id_pw | naver | kakao | mixed  (사이트별로 확인되면 기재)
+# my_applications_url: 로그인 후 "내 신청/선정 내역" 페이지 경로 (확인 후 기재)
+# 환경변수 이름은 key 를 대문자로 + _ID / _PW (예: ASSAVIEW_ID). .env.example 참고.
+
+sites:
+  - key: gangnam
+    name: 강남맛집
+    domain: gangnam-review.net
+    domain_verified: true   # 검색 결과에 사이트 캠페인 페이지 확인
+    login_type: unknown
+    my_applications_url: null
+    id_env: GANGNAM_ID
+    pw_env: GANGNAM_PW
+
+  - key: reviewnote
+    name: 리뷰노트
+    domain: reviewnote.co.kr
+    domain_verified: true   # 앱스토어/플레이스토어 홈페이지 주소와 일치
+    login_type: unknown
+    my_applications_url: null
+    id_env: REVIEWNOTE_ID
+    pw_env: REVIEWNOTE_PW
+
+  - key: dinnerqueen
+    name: 디너의여왕
+    domain: dinnerqueen.net
+    domain_verified: true   # 플레이스토어 공식 웹사이트 표기
+    login_type: unknown
+    my_applications_url: null
+    id_env: DINNERQUEEN_ID
+    pw_env: DINNERQUEEN_PW
+
+  - key: reviewplace
+    name: 리뷰플레이스
+    domain: reviewplace.co.kr
+    domain_verified: true   # 앱스토어 등록 정보
+    login_type: unknown
+    my_applications_url: null
+    id_env: REVIEWPLACE_ID
+    pw_env: REVIEWPLACE_PW
+
+  - key: mible
+    name: 미블
+    domain: mrblog.net
+    domain_verified: true   # 메인 페이지 확인. 가입은 SNS 간편가입 안내 있음
+    login_type: unknown
+    my_applications_url: null
+    id_env: MIBLE_ID
+    pw_env: MIBLE_PW
+
+  - key: chvu
+    name: 체험뷰
+    domain: chvu.co.kr
+    domain_verified: true   # 메인 페이지 확인
+    login_type: unknown
+    my_applications_url: null
+    id_env: CHVU_ID
+    pw_env: CHVU_PW
+
+  - key: popomon
+    name: 포포몬
+    domain: popomon.com
+    domain_verified: true   # 메인 페이지 확인
+    login_type: unknown
+    my_applications_url: null
+    id_env: POPOMON_ID
+    pw_env: POPOMON_PW
+
+  - key: assaview
+    name: 아싸뷰
+    domain: assaview.co.kr
+    domain_verified: true   # 로그인 페이지에 네이버/카카오/Apple + 아이디·비번 (assaview.co.kr/login.php)
+    login_type: mixed
+    my_applications_url: null
+    id_env: ASSAVIEW_ID
+    pw_env: ASSAVIEW_PW
+
+  - key: supermembers
+    name: 슈퍼멤버스
+    domain: supermembers.co.kr
+    domain_verified: true   # 블로거 로그인 페이지 supermembers.co.kr/signin/. 광고주 로그인과 별개
+    login_type: unknown
+    my_applications_url: null
+    id_env: SUPERMEMBERS_ID
+    pw_env: SUPERMEMBERS_PW
+
+  - key: revu
+    name: 레뷰
+    domain: revu.net
+    domain_verified: true   # 앱스토어 홈페이지 주소. 광고주용은 biz.revu.net
+    login_type: unknown
+    my_applications_url: null
+    id_env: REVU_ID
+    pw_env: REVU_PW
+
+  - key: seoulouba
+    name: 서울오빠
+    domain: seoulouba.co.kr
+    domain_verified: true   # 사용자가 직접 제공한 주소
+    login_type: unknown
+    my_applications_url: null
+    id_env: SEOULOUBA_ID
+    pw_env: SEOULOUBA_PW
+
+  - key: cloudreview
+    name: 클라우드리뷰
+    domain: cloudreview.co.kr
+    domain_verified: true   # 사용자가 직접 제공한 주소
+    login_type: unknown
+    my_applications_url: null
+    id_env: CLOUDREVIEW_ID
+    pw_env: CLOUDREVIEW_PW
+
+  - key: tble
+    name: 티블
+    domain: tble.kr
+    domain_verified: true   # 메인 페이지 확인. 구 도메인 tble.co.kr 은 사용하지 말 것
+    login_type: unknown
+    my_applications_url: null
+    id_env: TBLE_ID
+    pw_env: TBLE_PW
+
+  - key: cometoplay
+    name: 놀러와
+    domain: cometoplay.kr
+    domain_verified: true   # 놀러와체험단 FAQ 페이지 확인. 선정 결과는 사이트 알림+카카오 알림톡
+    login_type: unknown
+    my_applications_url: null
+    id_env: COMETOPLAY_ID
+    pw_env: COMETOPLAY_PW
+
+  - key: ringble
+    name: 링블
+    domain: ringble.co.kr
+    domain_verified: true   # 메인 페이지 확인
+    login_type: unknown
+    my_applications_url: null
+    id_env: RINGBLE_ID
+    pw_env: RINGBLE_PW
+
+  - key: odiya
+    name: 어디야체험단
+    domain: odiya.kr
+    domain_verified: true   # 메인 페이지 확인
+    login_type: unknown
+    my_applications_url: null
+    id_env: ODIYA_ID
+    pw_env: ODIYA_PW
+
+  - key: rewardings
+    name: 리워딩스
+    domain: rewardings.co.kr
+    domain_verified: true   # 사용자가 직접 제공한 주소
+    login_type: unknown
+    my_applications_url: null
+    id_env: REWARDINGS_ID
+    pw_env: REWARDINGS_PW
+
+  - key: stylec
+    name: 스타일씨
+    domain: stylec.co.kr
+    domain_verified: true   # 체험단 페이지 stylec.co.kr/trials, 앱 지원 메일 도메인
+    login_type: unknown
+    my_applications_url: null
+    id_env: STYLEC_ID
+    pw_env: STYLEC_PW
