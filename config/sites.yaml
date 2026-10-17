@@ -1,6 +1,7 @@
 # 지원 체험단 사이트 카탈로그. 공개 정보만 기재 (계정·비밀번호·개인 URL 금지).
-# domain_verified: true  = 웹 검색 결과에서 사이트 자체/앱스토어 등록 정보로 확인됨 (직접 접속 테스트는 아님)
-#                  false = 간접 근거뿐. 사용 전 직접 접속해 확인.
+# domain_source: 도메인을 알게 된 근거. user = 사용자가 직접 제공, search = 웹 검색 결과(직접 접속 테스트 아님),
+#                adapter_tested = 어댑터로 실제 접속 확인됨
+# adapter: none | experimental | stable  (자동 수집 지원 수준. none 이면 Notion에 직접 입력해도 마감 알림은 동일하게 제공)
 # login_type: unknown | id_pw | naver | kakao | mixed  (사이트별로 확인되면 기재)
 # my_applications_url: 로그인 후 "내 신청/선정 내역" 페이지 경로 (확인 후 기재)
 # 환경변수 이름은 key 를 대문자로 + _ID / _PW (예: ASSAVIEW_ID). .env.example 참고.
@@ -9,7 +10,8 @@ sites:
   - key: gangnam
     name: 강남맛집
     domain: gangnam-review.net
-    domain_verified: true   # 검색 결과에 사이트 캠페인 페이지 확인
+    domain_source: search   # 검색 결과에 사이트 캠페인 페이지 확인
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: GANGNAM_ID
@@ -18,7 +20,8 @@ sites:
   - key: reviewnote
     name: 리뷰노트
     domain: reviewnote.co.kr
-    domain_verified: true   # 앱스토어/플레이스토어 홈페이지 주소와 일치
+    domain_source: search   # 앱스토어/플레이스토어 홈페이지 주소와 일치
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: REVIEWNOTE_ID
@@ -27,7 +30,8 @@ sites:
   - key: dinnerqueen
     name: 디너의여왕
     domain: dinnerqueen.net
-    domain_verified: true   # 플레이스토어 공식 웹사이트 표기
+    domain_source: search   # 플레이스토어 공식 웹사이트 표기
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: DINNERQUEEN_ID
@@ -36,7 +40,8 @@ sites:
   - key: reviewplace
     name: 리뷰플레이스
     domain: reviewplace.co.kr
-    domain_verified: true   # 앱스토어 등록 정보
+    domain_source: search   # 앱스토어 등록 정보
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: REVIEWPLACE_ID
@@ -45,7 +50,8 @@ sites:
   - key: mible
     name: 미블
     domain: mrblog.net
-    domain_verified: true   # 메인 페이지 확인. 가입은 SNS 간편가입 안내 있음
+    domain_source: search   # 메인 페이지 확인. 가입은 SNS 간편가입 안내 있음
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: MIBLE_ID
@@ -54,7 +60,8 @@ sites:
   - key: chvu
     name: 체험뷰
     domain: chvu.co.kr
-    domain_verified: true   # 메인 페이지 확인
+    domain_source: search   # 메인 페이지 확인
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: CHVU_ID
@@ -63,7 +70,8 @@ sites:
   - key: popomon
     name: 포포몬
     domain: popomon.com
-    domain_verified: true   # 메인 페이지 확인
+    domain_source: search   # 메인 페이지 확인
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: POPOMON_ID
@@ -72,7 +80,8 @@ sites:
   - key: assaview
     name: 아싸뷰
     domain: assaview.co.kr
-    domain_verified: true   # 로그인 페이지에 네이버/카카오/Apple + 아이디·비번 (assaview.co.kr/login.php)
+    domain_source: search   # 로그인 페이지에 네이버/카카오/Apple + 아이디·비번 (assaview.co.kr/login.php)
+    adapter: none
     login_type: mixed
     my_applications_url: null
     id_env: ASSAVIEW_ID
@@ -81,7 +90,8 @@ sites:
   - key: supermembers
     name: 슈퍼멤버스
     domain: supermembers.co.kr
-    domain_verified: true   # 블로거 로그인 페이지 supermembers.co.kr/signin/. 광고주 로그인과 별개
+    domain_source: search   # 블로거 로그인 페이지 supermembers.co.kr/signin/. 광고주 로그인과 별개
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: SUPERMEMBERS_ID
@@ -90,7 +100,8 @@ sites:
   - key: revu
     name: 레뷰
     domain: revu.net
-    domain_verified: true   # 앱스토어 홈페이지 주소. 광고주용은 biz.revu.net
+    domain_source: search   # 앱스토어 홈페이지 주소. 광고주용은 biz.revu.net
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: REVU_ID
@@ -99,7 +110,8 @@ sites:
   - key: seoulouba
     name: 서울오빠
     domain: seoulouba.co.kr
-    domain_verified: true   # 사용자가 직접 제공한 주소
+    domain_source: user   # 사용자가 직접 제공한 주소
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: SEOULOUBA_ID
@@ -108,7 +120,8 @@ sites:
   - key: cloudreview
     name: 클라우드리뷰
     domain: cloudreview.co.kr
-    domain_verified: true   # 사용자가 직접 제공한 주소
+    domain_source: user   # 사용자가 직접 제공한 주소
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: CLOUDREVIEW_ID
@@ -117,7 +130,8 @@ sites:
   - key: tble
     name: 티블
     domain: tble.kr
-    domain_verified: true   # 메인 페이지 확인. 구 도메인 tble.co.kr 은 사용하지 말 것
+    domain_source: search   # 메인 페이지 확인. 구 도메인 tble.co.kr 은 사용하지 말 것
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: TBLE_ID
@@ -126,7 +140,8 @@ sites:
   - key: cometoplay
     name: 놀러와
     domain: cometoplay.kr
-    domain_verified: true   # 놀러와체험단 FAQ 페이지 확인. 선정 결과는 사이트 알림+카카오 알림톡
+    domain_source: search   # 놀러와체험단 FAQ 페이지 확인. 선정 결과는 사이트 알림+카카오 알림톡
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: COMETOPLAY_ID
@@ -135,7 +150,8 @@ sites:
   - key: ringble
     name: 링블
     domain: ringble.co.kr
-    domain_verified: true   # 메인 페이지 확인
+    domain_source: search   # 메인 페이지 확인
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: RINGBLE_ID
@@ -144,7 +160,8 @@ sites:
   - key: odiya
     name: 어디야체험단
     domain: odiya.kr
-    domain_verified: true   # 메인 페이지 확인
+    domain_source: search   # 메인 페이지 확인
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: ODIYA_ID
@@ -153,7 +170,8 @@ sites:
   - key: rewardings
     name: 리워딩스
     domain: rewardings.co.kr
-    domain_verified: true   # 사용자가 직접 제공한 주소
+    domain_source: user   # 사용자가 직접 제공한 주소
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: REWARDINGS_ID
@@ -162,7 +180,8 @@ sites:
   - key: stylec
     name: 스타일씨
     domain: stylec.co.kr
-    domain_verified: true   # 체험단 페이지 stylec.co.kr/trials, 앱 지원 메일 도메인
+    domain_source: search   # 체험단 페이지 stylec.co.kr/trials, 앱 지원 메일 도메인
+    adapter: none
     login_type: unknown
     my_applications_url: null
     id_env: STYLEC_ID
