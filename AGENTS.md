@@ -1,4 +1,17 @@
-# Instructions for AI coding agents
+# Instructions for AI coding agents (Claude Code, Codex, and others)
+
+## Continuing development of this repository
+
+**Read [CLAUDE.md](CLAUDE.md) in full before doing any development work.** Despite the file name, it is tool-agnostic: it holds the project purpose, rules, current status, and open decisions. (Its section 7 describes the Claude Code cloud sandbox; other environments differ, so check what you can actually reach.)
+
+The essentials, in case you only read this file:
+- **Purpose:** blog/Instagram 체험단 users should not have to check many campaign sites by hand. The agent must *automatically* collect selection results and deadlines, store them in one Notion table, and alert via Telegram. Manual entry or sharing messages is only a stopgap for sites without an adapter. Keep user input minimal.
+- **Users:** non-developers who know little about AI; they have a GitHub account. Write plain, step-by-step Korean guidance without heavy metaphors.
+- **Never commit personal data:** no passwords, tokens, API keys, emails, phone numbers, or content from the maintainer's private Notion or logged-in site pages. Keep the `.githooks/pre-commit` guard on.
+- Dates are always Korean time (`rules.today_kst()`); record notification history only after a successful send; never overwrite the Notion columns that humans fill in.
+- Do not claim something works unless you ran it. The Notion/Telegram integration has not yet been verified against the live APIs.
+
+## Helping a user install or set up
 
 When a user asks you to install, set up, or run this repository for the first time:
 

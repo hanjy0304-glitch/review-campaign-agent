@@ -43,9 +43,9 @@
 - 설정 마법사 `python -m review_campaign_agent setup` (대화형 + `--sites` 비대화형), 설정 로딩, 알림 규칙(`rules.py`: 신규 선정/글 마감 D-3·D-1·D-day/마감 지남/마감일 미입력/방문일 D-1·D-day/방문형 방문일 미입력)
 - 개인정보 차단 장치: `.gitignore`, `.githooks/pre-commit`
 
-PR (draft, 브랜치 `feat/notion-telegram`, 아직 병합 안 됨):
+`main` 브랜치에 PR #2로 병합됨 (2026-10-17):
 - Notion 표 양식·저장소(`notion_*.py`), 텔레그램(`telegram.py`), 실행기(`sync.py`, 명령 `run`), `notion-init`·`telegram-chat-id`·`telegram-test`, 사용자 문서(README, `docs/`), 워크플로우 `tests.yml`·`run.yml`·`connections.yml`
-- **실제 Notion·텔레그램 API로는 검증하지 못했습니다** (테스트는 HTTP 모킹). 사용자가 Secrets를 등록하고 `연결 확인` 버튼으로 확인한 뒤 병합하기로 했습니다.
+- **실제 Notion·텔레그램 API로는 아직 검증하지 못했습니다** (테스트는 HTTP 모킹). `연결 확인` 버튼은 기본 브랜치에 있어야 Actions 탭에 나타나므로 검증 전에 병합했습니다. **남은 일: 사용자가 Secrets를 등록하고 `연결 확인`(`telegram-test`, `notion-check`)으로 실제 연결을 확인하는 것.** 오류가 나면 후속 PR로 고칩니다.
 
 아직 없음: 어댑터(핵심), gitleaks 검사, LICENSE, SECURITY.md, 템플릿 저장소 설정.
 
@@ -70,7 +70,7 @@ PR (draft, 브랜치 `feat/notion-telegram`, 아직 병합 안 됨):
 - 실행은 저장소 루트에서 합니다 (`pip install`로 설치하는 방식이 아닙니다. `config/`를 저장소 경로에서 찾습니다).
 - 사용자 안내 문서는 한국어, 코드·식별자는 영어/기존 스타일. 파일 이름이 고정돼야 하는 파일(코드, 워크플로우, README.md)은 버전·날짜를 이름에 붙이지 않습니다.
 
-## 7. 클라우드 환경의 제약 (이 저장소를 Claude Code 클라우드 세션에서 열 때)
+## 7. 클라우드 환경의 제약 (Claude Code 클라우드 세션 기준, 다른 도구·환경에서는 달라질 수 있음)
 
 - 세션은 시작할 때 연결된 저장소에만 GitHub 쓰기 권한이 있습니다. 새 저장소 생성(`gh repo create`, `user/repos`)과 GraphQL(`gh pr create` 포함)은 403으로 막힙니다. PR은 REST로 만듭니다: `gh api repos/<owner>/<repo>/pulls -X POST ...`, 병합은 `PUT .../pulls/<n>/merge`, draft 해제는 `POST .../pulls/<n>/ccr/ready_for_review`.
 - 샌드박스는 `api.notion.com`, `api.telegram.org`, 체험단 사이트에 접속할 수 없습니다 (프록시가 403). 실제 연결 검증은 사용자의 GitHub Actions에서 해야 합니다. 환경 설정에서 허용 도메인을 추가하면 풀 수 있습니다.
@@ -82,7 +82,7 @@ PR (draft, 브랜치 `feat/notion-telegram`, 아직 병합 안 됨):
 1. **자동 수집(어댑터)을 최우선으로 진행할지** 사용자 확인 대기 중 (3번 방향 제안에 대한 답변을 아직 받지 못함).
 2. 어댑터를 만들 상위 사이트(제안: 리뷰노트, 강남맛집, 슈퍼멤버스)의 **로그인 방식**(아이디/비번 vs 소셜만) — 사용자가 확인해 알려 주기로 함.
 3. 어댑터 개발 중 **로그인 후 화면 구조(개인정보는 가림)를 AI가 읽는 것**에 대한 사용자 동의 — 아직 받지 못함.
-4. PR `feat/notion-telegram`(#2) 병합 조건: 사용자가 Secrets를 등록하고 `연결 확인` 버튼(`telegram-test`, `notion-check`)으로 확인한 뒤. 아직 확인 전.
+4. 사용자의 실제 연결 확인: Secrets 4개 등록 → Actions의 `연결 확인`에서 `telegram-chat-id`, `telegram-test`, `notion-check` 실행. 아직 확인 전 (PR #2는 병합 완료).
 5. 템플릿 저장소 설정·LICENSE·gitleaks는 공개 전환 직전에 처리.
 
 ## 9. 메인테이너(저장소 주인) 환경 메모
