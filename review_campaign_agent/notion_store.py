@@ -19,11 +19,14 @@ class NotionError(Exception):
 
 def parse_notion_id(url_or_id: str) -> str:
     """Notion 페이지 링크 또는 id 에서 32자리 id 를 뽑아 UUID 형식으로 돌려준다."""
-    path = url_or_id.strip().split("?")[0].split("#")[0].replace("-", "")
-    found = re.findall(r"[0-9a-fA-F]{32}", path)
+    path = url_or_id.strip().split("?")[0].split("#")[0]
+    # "제목-<32자리>" 형태라서 제목 끝 글자(a-f)가 id 에 섞이지 않도록 하이픈을 지우기 전에 경계를 본다
+    plain = re.findall(r"(?<![0-9a-fA-F])[0-9a-fA-F]{32}(?![0-9a-fA-F])", path)
+    dashed = re.findall(r"(?<![0-9a-fA-F])[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}(?![0-9a-fA-F])", path)
+    found = plain[-1] if plain else dashed[-1].replace("-", "") if dashed else None
     if not found:
         raise NotionError("Notion 링크에서 페이지 id 를 찾지 못했습니다. 페이지의 '링크 복사' 주소를 넣으세요.")
-    h = found[-1].lower()
+    h = found.lower()
     return f"{h[:8]}-{h[8:12]}-{h[12:16]}-{h[16:20]}-{h[20:]}"
 
 

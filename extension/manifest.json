@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "체험단 에이전트 수집기",
+  "version": "0.1.0",
+  "description": "내 PC 크롬에서 이미 로그인된 체험단 사이트의 '진행중 체험단'을 읽어 내 Notion 표에 저장합니다. 사이트 계정 정보는 읽거나 저장하지 않습니다.",
+  "permissions": [
+    "alarms",
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.reviewnote.co.kr/*",
+    "https://api.notion.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "options_page": "options.html",
+  "action": {}
+}
