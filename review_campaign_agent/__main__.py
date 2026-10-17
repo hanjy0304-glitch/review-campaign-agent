@@ -7,6 +7,7 @@ from .catalog import CONFIG_DIR, load_catalog
 from .config import ConfigError, load_user_config, notify_days, required_env_vars, resolve_sites
 from .envfile import load_dotenv
 from .notion_store import NotionClient, NotionError, NotionStore, create_database, parse_notion_id
+from .probe import format_results, probe_sites
 from .rules import today_kst
 from .setup_wizard import parse_days, run_setup, run_setup_noninteractive
 from .sync import run_sync
@@ -111,6 +112,11 @@ def _telegram_test() -> int:
     return 0
 
 
+def _probe() -> int:
+    print(format_results(probe_sites(load_catalog())))
+    return 0
+
+
 def _run(args: argparse.Namespace) -> int:
     try:
         reminder_days, visit_days = notify_days(load_user_config())
@@ -149,6 +155,7 @@ def main() -> int:
     ni.add_argument("--title", default="체험단 관리")
     sub.add_parser("telegram-chat-id", help="봇에게 메시지를 보낸 뒤 내 chat_id 찾기")
     sub.add_parser("telegram-test", help="텔레그램 연결 테스트 메시지 보내기")
+    sub.add_parser("probe", help="로그인 없이 카탈로그 사이트 접속 가능 여부 확인")
     run = sub.add_parser("run", help="Notion 을 읽어 오늘 알림 보내기")
     run.add_argument("--dry-run", action="store_true", help="보내거나 기록하지 않고 내용만 출력")
     run.add_argument("--summary", action="store_true", help="오늘의 할 일 요약도 보내기 (아침 실행용)")
@@ -159,6 +166,7 @@ def main() -> int:
         "notion-init": lambda: _notion_init(args),
         "telegram-chat-id": _telegram_chat_id,
         "telegram-test": _telegram_test,
+        "probe": _probe,
         "run": lambda: _run(args),
     }[args.command]()
 
