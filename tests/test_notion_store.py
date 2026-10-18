@@ -83,6 +83,8 @@ def test_parse_notion_id_from_link_and_raw_id():
     assert parse_notion_id(f"https://app.notion.com/p/{SAMPLE_ID}?source=copy_link") == expected
     assert parse_notion_id(f"https://www.notion.so/내-페이지-{SAMPLE_ID}") == expected
     assert parse_notion_id(expected) == expected
+    # 제목이 a-f 로 끝나도 제목 글자가 id 에 섞이지 않는다
+    assert parse_notion_id(f"https://www.notion.so/ws/Home-Page-{SAMPLE_ID}") == expected
     with pytest.raises(NotionError):
         parse_notion_id("https://notion.so/no-id-here")
 

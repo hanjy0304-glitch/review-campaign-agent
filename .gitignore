@@ -42,3 +42,6 @@ venv/
 _build/
 build/
 *.egg-info/
+
+# 확장 프로그램 개발 도구
+extension/node_modules/
