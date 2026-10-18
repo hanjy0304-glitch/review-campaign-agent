@@ -71,9 +71,24 @@ test("바뀐 것이 없으면 아무것도 쓰지 않는다", async () => {
   assert.equal(calls.some((c) => c.method !== "POST" || c.path !== "/databases/db1/query"), false);
 });
 
-test("오류 메시지에 토큰이 들어가지 않는다", async () => {
+test("오류 메시지에 토큰이 들어가지 않고 원인은 남는다", async () => {
   const api = new NotionApi("secret_TOKEN", "db1", async () => {
-    throw new Error("secret_TOKEN failed");
+    const e = new TypeError("secret_TOKEN failed to fetch");
+    throw e;
   });
-  await assert.rejects(api.findByKey("k"), (e) => !e.message.includes("secret_TOKEN"));
+  await assert.rejects(api.findByKey("k"), (e) => !e.message.includes("secret_TOKEN") && e.message.includes("TypeError"));
+});
+
+test("토큰에 한글·공백이 섞이면 바로 알려 준다", () => {
+  assert.throws(() => new NotionApi("secret_토큰", "db1"), /잘못된 문자/);
+  assert.throws(() => new NotionApi("secret_a b", "db1"), /잘못된 문자/);
+});
+
+test("fetch 를 객체 속성으로 부르지 않는다 (브라우저 fetch 는 this 가 바뀌면 거부함)", async () => {
+  const strictFetch = function () {
+    if (this !== undefined) throw new TypeError("Illegal invocation");
+    return Promise.resolve({ ok: true, json: async () => ({ results: [] }) });
+  };
+  const api = new NotionApi("tok", "db1", strictFetch);
+  assert.equal(await api.findByKey("k"), null);
 });

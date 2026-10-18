@@ -62,6 +62,9 @@ function newPageProperties(row, today) {
 
 export class NotionApi {
   constructor(token, databaseId, fetchFn = fetch) {
+    if (!/^[\x21-\x7e]+$/.test(token)) {
+      throw new Error("Notion 토큰에 공백·한글 등 잘못된 문자가 있습니다. 시크릿 키(ntn_… 또는 secret_…)만 다시 붙여넣어 주세요.");
+    }
     this.token = token;
     this.db = databaseId;
     this.fetch = fetchFn;
@@ -70,7 +73,9 @@ export class NotionApi {
   async request(method, path, body) {
     let res;
     try {
-      res = await this.fetch(API + path, {
+      // 속성으로 꺼내 부르면 this 가 바뀌어 브라우저 fetch 가 'Illegal invocation' 으로 거부하므로 지역 변수로 부른다
+      const doFetch = this.fetch;
+      res = await doFetch(API + path, {
         method,
         headers: {
           Authorization: `Bearer ${this.token}`,
@@ -79,8 +84,10 @@ export class NotionApi {
         },
         body: body ? JSON.stringify(body) : undefined,
       });
-    } catch {
-      throw new Error("Notion 연결 실패"); // 오류 메시지에 토큰이 섞이지 않게 원인은 남기지 않는다
+    } catch (e) {
+      // 원인을 알 수 있도록 오류 종류와 메시지를 남기되, 토큰 값은 가린다
+      const detail = String(e?.message || "").split(this.token).join("***").slice(0, 150);
+      throw new Error(`Notion 연결 실패 (${e?.name || "Error"}: ${detail})`);
     }
     if (!res.ok) {
       let message = "";
