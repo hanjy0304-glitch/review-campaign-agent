@@ -83,3 +83,12 @@ test("토큰에 한글·공백이 섞이면 바로 알려 준다", () => {
   assert.throws(() => new NotionApi("secret_토큰", "db1"), /잘못된 문자/);
   assert.throws(() => new NotionApi("secret_a b", "db1"), /잘못된 문자/);
 });
+
+test("fetch 를 객체 속성으로 부르지 않는다 (브라우저 fetch 는 this 가 바뀌면 거부함)", async () => {
+  const strictFetch = function () {
+    if (this !== undefined) throw new TypeError("Illegal invocation");
+    return Promise.resolve({ ok: true, json: async () => ({ results: [] }) });
+  };
+  const api = new NotionApi("tok", "db1", strictFetch);
+  assert.equal(await api.findByKey("k"), null);
+});

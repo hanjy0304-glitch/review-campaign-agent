@@ -73,7 +73,9 @@ export class NotionApi {
   async request(method, path, body) {
     let res;
     try {
-      res = await this.fetch(API + path, {
+      // 속성으로 꺼내 부르면 this 가 바뀌어 브라우저 fetch 가 'Illegal invocation' 으로 거부하므로 지역 변수로 부른다
+      const doFetch = this.fetch;
+      res = await doFetch(API + path, {
         method,
         headers: {
           Authorization: `Bearer ${this.token}`,
