@@ -71,9 +71,15 @@ test("바뀐 것이 없으면 아무것도 쓰지 않는다", async () => {
   assert.equal(calls.some((c) => c.method !== "POST" || c.path !== "/databases/db1/query"), false);
 });
 
-test("오류 메시지에 토큰이 들어가지 않는다", async () => {
+test("오류 메시지에 토큰이 들어가지 않고 원인은 남는다", async () => {
   const api = new NotionApi("secret_TOKEN", "db1", async () => {
-    throw new Error("secret_TOKEN failed");
+    const e = new TypeError("secret_TOKEN failed to fetch");
+    throw e;
   });
-  await assert.rejects(api.findByKey("k"), (e) => !e.message.includes("secret_TOKEN"));
+  await assert.rejects(api.findByKey("k"), (e) => !e.message.includes("secret_TOKEN") && e.message.includes("TypeError"));
+});
+
+test("토큰에 한글·공백이 섞이면 바로 알려 준다", () => {
+  assert.throws(() => new NotionApi("secret_토큰", "db1"), /잘못된 문자/);
+  assert.throws(() => new NotionApi("secret_a b", "db1"), /잘못된 문자/);
 });
