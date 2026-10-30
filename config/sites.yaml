@@ -2,6 +2,7 @@
 # domain_source: 도메인을 알게 된 근거. user = 사용자가 직접 제공, search = 웹 검색 결과(직접 접속 테스트 아님),
 #                adapter_tested = 어댑터로 실제 접속 확인됨
 # adapter: none | experimental | stable  (자동 수집 지원 수준. none 이면 Notion에 직접 입력해도 마감 알림은 동일하게 제공)
+#   자동 수집은 현재 크롬 확장(extension/) 방식이다. 새 사이트 추가 절차는 docs/add-site.md 참고.
 # login_type: unknown | id_pw | naver | kakao | mixed  (사이트별로 확인되면 기재)
 # my_applications_url: 로그인 후 "내 신청/선정 내역" 페이지 경로 (확인 후 기재)
 # 환경변수 이름은 key 를 대문자로 + _ID / _PW (예: ASSAVIEW_ID). .env.example 참고.
@@ -10,9 +11,9 @@ sites:
   - key: gangnam
     name: 강남맛집
     domain: gangnam-review.net
-    domain_source: search   # 검색 결과에 사이트 캠페인 페이지 확인
+    domain_source: search   # 검색 결과에 사이트 캠페인 페이지 확인. 실제 접속은 강남맛집.net(punycode)으로 리다이렉트됨
     adapter: none
-    login_type: unknown
+    login_type: unknown     # 2026-10-30 재확인: 외부 네트워크에서 접속 불가(ConnectTimeout). 로그인 방식은 사용자 PC에서만 확인 가능
     my_applications_url: null
     id_env: GANGNAM_ID
     pw_env: GANGNAM_PW
@@ -21,9 +22,9 @@ sites:
     name: 리뷰노트
     domain: reviewnote.co.kr
     domain_source: search   # 앱스토어/플레이스토어 홈페이지 주소와 일치
-    adapter: none
+    adapter: experimental   # 크롬 확장(extension/)이 '진행중' 목록을 읽어 Notion에 저장. 2026-10-18 실제 화면→Notion 저장 확인
     login_type: mixed       # 로그인 화면(/sns/login)에 네이버·Apple 버튼만 확인됨. 아이디/비번 입력칸 없음 (Actions 브라우저로 확인)
-    my_applications_url: null
+    my_applications_url: /users/my_campaign?menuLayout=true&tab=ongoing   # 확장이 읽는 '내 체험단 > 진행중' 화면
     id_env: REVIEWNOTE_ID
     pw_env: REVIEWNOTE_PW
 
@@ -32,7 +33,7 @@ sites:
     domain: dinnerqueen.net
     domain_source: search   # 플레이스토어 공식 웹사이트 표기
     adapter: none
-    login_type: unknown
+    login_type: mixed       # 로그인 페이지(/login/form_new)에 아이디·비밀번호 + 네이버·카카오·Apple·Google 확인 (2026-10-30, 공개 페이지)
     my_applications_url: null
     id_env: DINNERQUEEN_ID
     pw_env: DINNERQUEEN_PW
@@ -42,7 +43,7 @@ sites:
     domain: reviewplace.co.kr
     domain_source: search   # 앱스토어 등록 정보
     adapter: none
-    login_type: unknown
+    login_type: mixed       # 로그인 페이지(/bbs/login.php)에 아이디·비밀번호 + 네이버·Apple 소셜 링크 확인 (2026-10-30, 공개 페이지)
     my_applications_url: null
     id_env: REVIEWPLACE_ID
     pw_env: REVIEWPLACE_PW
@@ -52,7 +53,7 @@ sites:
     domain: mrblog.net
     domain_source: search   # 메인 페이지 확인. 가입은 SNS 간편가입 안내 있음
     adapter: none
-    login_type: unknown
+    login_type: mixed       # 로그인 페이지(/login)에 아이디·비밀번호 + 네이버·Apple 'SNS로 간편하게' 확인 (2026-10-30, 공개 페이지)
     my_applications_url: null
     id_env: MIBLE_ID
     pw_env: MIBLE_PW
@@ -62,7 +63,7 @@ sites:
     domain: chvu.co.kr
     domain_source: search   # 메인 페이지 확인
     adapter: none
-    login_type: unknown
+    login_type: mixed       # 로그인 페이지(/login)에 비밀번호 칸과 네이버 로그인 SDK 확인. SNS 버튼 노출 여부는 미확인 (2026-10-30, 공개 페이지)
     my_applications_url: null
     id_env: CHVU_ID
     pw_env: CHVU_PW

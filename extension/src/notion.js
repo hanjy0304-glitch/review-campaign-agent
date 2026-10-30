@@ -3,10 +3,7 @@
 // 사람 칸(진행단계·방문일·페이백·메모 등)은 건드리지 않는다. 제공내역·유형은 새 행을 만들 때만 채운다.
 const API = "https://api.notion.com/v1";
 const NOTION_VERSION = "2022-06-28";
-
-export const SITE_KEY = "reviewnote";
-export const SITE_NAME = "리뷰노트";
-export const ORIGIN = "https://www.reviewnote.co.kr";
+// 사이트별 값(고유키 접두사·표시 이름·주소)은 src/sites.js 의 SITES 가 가진다.
 
 export function parseNotionId(urlOrId) {
   // "제목-<32자리>" 형태이므로 제목 끝 글자(a-f)가 id 에 섞이지 않도록 하이픈을 지우기 전에 경계를 본다
@@ -33,21 +30,21 @@ const text = (kind, v) => ({ [kind]: v ? [{ type: "text", text: { content: Strin
 const select = (v) => ({ select: v ? { name: v } : null });
 const date = (v) => ({ date: v ? { start: v } : null });
 
-export function toRow(card, today) {
+export function toRow(card, today, site) {
   return {
-    key: `${SITE_KEY}:${card.campaignId}`,
-    title: card.title || `리뷰노트 #${card.campaignId}`,
+    key: `${site.key}:${card.campaignId}`,
+    title: card.title || `${site.name} #${card.campaignId}`,
     deadline: card.daysLeft == null ? null : addDays(today, card.daysLeft),
-    url: ORIGIN + card.href,
+    url: site.origin + card.href,
     kind: card.kind,
     provided: card.provided,
   };
 }
 
-function newPageProperties(row, today) {
+function newPageProperties(row, today, site) {
   const props = {
     체험단명: text("title", row.title),
-    사이트: select(SITE_NAME),
+    사이트: select(site.name),
     선정상태: select("선정"),
     선정일: date(today),
     글마감일: date(row.deadline),
@@ -109,16 +106,16 @@ export class NotionApi {
 }
 
 // 읽은 카드들을 표에 반영한다. 반환: { added, updated, unchanged }
-export async function syncCards(api, cards, now = new Date()) {
+export async function syncCards(api, cards, site, now = new Date()) {
   const today = todayKst(now);
   const result = { added: 0, updated: 0, unchanged: 0 };
   for (const card of cards) {
-    const row = toRow(card, today);
+    const row = toRow(card, today, site);
     const page = await api.findByKey(row.key);
     if (!page) {
       await api.request("POST", "/pages", {
         parent: { database_id: api.db },
-        properties: newPageProperties(row, today),
+        properties: newPageProperties(row, today, site),
       });
       result.added++;
       continue;

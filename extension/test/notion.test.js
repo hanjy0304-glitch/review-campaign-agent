@@ -1,6 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { NotionApi, addDays, parseNotionId, syncCards, todayKst } from "../src/notion.js";
+import { SITES } from "../src/sites.js";
+
+const SITE = SITES.find((s) => s.key === "reviewnote");
 
 const CARD = {
   campaignId: "1000001",
@@ -39,7 +42,7 @@ test("Notion 주소에서 id 추출", () => {
 
 test("새 캠페인은 에이전트 칸과 제공내역·유형으로 새 행을 만든다", async () => {
   const { fn, calls } = fakeFetch(null);
-  const result = await syncCards(new NotionApi("tok", "db1", fn), [CARD], NOW);
+  const result = await syncCards(new NotionApi("tok", "db1", fn), [CARD], SITE, NOW);
   assert.deepEqual(result, { added: 1, updated: 0, unchanged: 0 });
   const created = calls.find((c) => c.method === "POST" && c.path === "/pages").body.properties;
   assert.equal(created["고유키"].rich_text[0].text.content, "reviewnote:1000001");
@@ -57,7 +60,7 @@ test("새 캠페인은 에이전트 칸과 제공내역·유형으로 새 행을
 test("기존 행은 마감일이 달라졌을 때만 마감일만 고친다", async () => {
   const page = { id: "p1", properties: { 글마감일: { date: { start: "2026-11-01" } }, 선정상태: { select: { name: "선정" } } } };
   const { fn, calls } = fakeFetch(page);
-  const result = await syncCards(new NotionApi("tok", "db1", fn), [CARD], NOW);
+  const result = await syncCards(new NotionApi("tok", "db1", fn), [CARD], SITE, NOW);
   assert.deepEqual(result, { added: 0, updated: 1, unchanged: 0 });
   const patch = calls.find((c) => c.method === "PATCH");
   assert.deepEqual(Object.keys(patch.body.properties), ["글마감일"]);
@@ -66,7 +69,7 @@ test("기존 행은 마감일이 달라졌을 때만 마감일만 고친다", as
 test("바뀐 것이 없으면 아무것도 쓰지 않는다", async () => {
   const page = { id: "p1", properties: { 글마감일: { date: { start: "2026-11-03" } }, 선정상태: { select: { name: "선정" } } } };
   const { fn, calls } = fakeFetch(page);
-  const result = await syncCards(new NotionApi("tok", "db1", fn), [CARD], NOW);
+  const result = await syncCards(new NotionApi("tok", "db1", fn), [CARD], SITE, NOW);
   assert.deepEqual(result, { added: 0, updated: 0, unchanged: 1 });
   assert.equal(calls.some((c) => c.method !== "POST" || c.path !== "/databases/db1/query"), false);
 });
