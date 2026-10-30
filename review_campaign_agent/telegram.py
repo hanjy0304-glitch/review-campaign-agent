@@ -40,6 +40,11 @@ class TelegramNotifier:
         )
 
 
+def get_bot_info(token: str, client: httpx.Client | None = None) -> dict:
+    """봇의 공개 정보(username 등)를 확인한다."""
+    return _bot_request(client or httpx.Client(timeout=30), token, "getMe").get("result", {})
+
+
 def find_chat_id(token: str, client: httpx.Client | None = None) -> str | None:
     """봇에게 아무 메시지나 보낸 뒤 호출하면 그 대화의 chat_id 를 돌려준다."""
     data = _bot_request(client or httpx.Client(timeout=30), token, "getUpdates")

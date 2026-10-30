@@ -12,7 +12,7 @@ from .probe import format_results, probe_sites
 from .rules import today_kst
 from .setup_wizard import parse_days, run_setup, run_setup_noninteractive
 from .sync import run_sync
-from .telegram import NotifyError, TelegramNotifier, find_chat_id
+from .telegram import NotifyError, TelegramNotifier, find_chat_id, get_bot_info
 
 
 def _env(name: str) -> str:
@@ -91,13 +91,27 @@ def _notion_init(args: argparse.Namespace) -> int:
 
 
 def _telegram_chat_id() -> int:
+    token = _env("TELEGRAM_BOT_TOKEN")
+    bot_info = {}
     try:
-        chat_id = find_chat_id(_env("TELEGRAM_BOT_TOKEN"))
+        bot_info = get_bot_info(token)
+        username = bot_info.get("username", "")
+        if username:
+            print(f"BOT_USERNAME: {username}")
+            print(f"BOT_LINK: https://t.me/{username}")
+    except Exception:
+        pass
+    try:
+        chat_id = find_chat_id(token)
     except NotifyError as e:
         print(e)
         return 1
     if not chat_id:
-        print("받은 메시지가 없습니다. 텔레그램에서 내 봇에게 아무 메시지나 보낸 뒤 다시 실행하세요.")
+        username = bot_info.get("username", "")
+        if username:
+            print(f"받은 메시지가 없습니다. 봇 링크(https://t.me/{username})를 열고 시작(Start) 또는 아무 메시지를 보낸 뒤 다시 실행하세요.")
+        else:
+            print("받은 메시지가 없습니다. 텔레그램에서 내 봇에게 아무 메시지나 보낸 뒤 다시 실행하세요.")
         return 1
     print(f"TELEGRAM_CHAT_ID 로 아래 값을 넣으세요:\n  {chat_id}")
     return 0
