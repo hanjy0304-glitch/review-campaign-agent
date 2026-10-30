@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# 커밋 직전 비밀/개인정보 차단. 우회(--no-verify) 금지.
+set -u
+
+fail=0
+red() { printf '\033[31m%s\033[0m\n' "$1"; }
+
+# 1) 금지 파일명
+while IFS= read -r f; do
+  case "$f" in
+    .env.example|config/user.example.yaml) ;;
+    _build/*|config/user.yaml|config/user.*.yaml|.env|.env.*|*.pem|*.key|*.secret|*storage_state*|*cookies*.json|*.session|*.har|*.log|fixtures_private/*|*/fixtures_private/*)
+      red "차단: 비밀/세션 파일은 커밋할 수 없습니다 → $f"; fail=1 ;;
+  esac
+done < <(git diff --cached --name-only --diff-filter=ACM)
+
+# 2) 추가된 줄에서 비밀 패턴 검색
+added=$(git diff --cached -U0 --diff-filter=ACM | grep -E '^\+' | grep -vE '^\+\+\+' || true)
+check() { # $1=설명 $2=정규식
+  if printf '%s\n' "$added" | grep -qE -- "$2"; then
+    red "차단: $1 패턴이 발견되었습니다."; fail=1
+  fi
+}
+check "텔레그램 봇 토큰"        '[0-9]{8,10}:[A-Za-z0-9_-]{35}'
+check "Notion 토큰"            '(secret_|ntn_)[A-Za-z0-9]{20,}'
+check "GitHub 토큰"            '(ghp_|gho_|ghs_|github_pat_)[A-Za-z0-9_]{20,}'
+check "비밀번호/토큰 값 대입"   '(PW|PASSWORD|PASSWD|TOKEN|SECRET|API_KEY)[A-Z_]*[[:space:]]*[=:][[:space:]]*["'"'"']?[^[:space:]"'"'"'#]{4,}'
+check "전화번호"               '01[016789]-?[0-9]{3,4}-?[0-9]{4}'
+check "이메일 주소"            '[A-Za-z0-9._%+-]+@(gmail|naver|daum|hanmail|kakao|nate|outlook|hotmail)\.[a-z.]+'
+
+if [ "$fail" -ne 0 ]; then
+  red "커밋이 중단되었습니다. 해당 값을 제거하고 환경변수/GitHub Secrets로 옮기세요."
+  exit 1
+fi
+exit 0

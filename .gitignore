@@ -1,0 +1,47 @@
+# --- 비밀/개인정보: 절대 커밋 금지 ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+*.secret
+config/user.yaml
+config/user.*.yaml
+!config/user.example.yaml
+
+# 로그인 세션/쿠키 (Playwright storage_state 등)
+storage_state*.json
+cookies*.json
+*.session
+.auth/
+sessions/
+
+# 로그인 후 받은 원본 HTML/스크린샷/로그 (닉네임·실명·연락처·주소 포함 가능)
+fixtures_private/
+tests/fixtures_private/
+screenshots/
+*.har
+*.log
+logs/
+
+# 로컬 산출물
+data/
+*.sqlite
+*.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.playwright/
+
+# 에이전트 빌드 과정 메모 (GitHub 업로드 금지)
+_build/
+build/
+*.egg-info/
+
+# 확장 프로그램 개발 도구
+extension/node_modules/
