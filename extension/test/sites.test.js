@@ -17,7 +17,8 @@ test("reviewnote 가 목록에 있다", () => {
   assert.ok(SITES.some((s) => s.key === "reviewnote" && s.name === "리뷰노트"));
 });
 
-test("디너의여왕·리뷰플레이스 가 목록에 있다", () => {
+test("디너의여왕·리뷰플레이스·서울오빠 가 목록에 있다", () => {
   assert.ok(SITES.some((s) => s.key === "dinnerqueen" && s.name === "디너의여왕"));
   assert.ok(SITES.some((s) => s.key === "reviewplace" && s.name === "리뷰플레이스"));
+  assert.ok(SITES.some((s) => s.key === "seoulouba" && s.name === "서울오빠"));
 });

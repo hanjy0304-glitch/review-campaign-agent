@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!-- 서울오빠 캠페인 카드 fixture. 2026-11-01 공개 캠페인 목록(https://seoulouba.co.kr/campaign/)의
+     카드 구조를 기준으로 만들었고, 실제 제목·썸네일 주소·캠페인 번호는 가짜 값으로 바꿨다.
+     마이페이지('내 캠페인', /mypage/my_campaign.php)도 같은 테마 마크업으로 그려지는 것으로 보나
+     로그인 화면 캡처(tools/capture.js)로 확인 전이다. -->
+<html>
+  <body>
+    <ul class="campaign_wbox">
+      <li class="campaign_content">
+        <div class="load_campaign">
+          <a href="https://seoulouba.co.kr/campaign/?c=1110001" target="_blank" class="tum_img">
+            <img src="https://example.com/fixture/1110001.jpg" width="90;" height="90;">
+          </a>
+          <div class="load_icon_box">
+            <div class="ltop_icon">
+              <div class="icon_box">
+                <img src="https://example.com/fixture/thum_ch_blog.png" alt="네이버블로그">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="load_info">
+          <div class="com_icon">
+            <div class="icon_tag">
+              <span>방문형</span>
+              <span>주말</span>
+            </div>
+          </div>
+          <div class="t_ttl">
+            <a href="https://seoulouba.co.kr/campaign/?c=1110001" target="_blank"><strong class="s_campaign_title">[테스트/가상] 예시 카페</strong></a>
+          </div>
+          <div class="t_basic">
+            <span class="basic_blue">예시 음료 2잔 + 디저트 1개 제공</span>
+          </div>
+          <div class="campaign_day_people">
+            <div class="d_day"><span>
+              D-7</span></div>
+            <div class="recruit"><span>신청 1 <span class="span_gray">/ 모집 11</span></span></div>
+          </div>
+        </div>
+      </li>
+
+      <li class="campaign_content">
+        <div class="load_campaign">
+          <a href="https://seoulouba.co.kr/campaign/?c=1110002" target="_blank" class="tum_img">
+            <img src="https://example.com/fixture/1110002.jpg" width="90;" height="90;">
+          </a>
+          <div class="load_icon_box">
+            <div class="ltop_icon">
+              <div class="icon_box">
+                <img src="https://example.com/fixture/thum_ch_store.png" alt="스토어">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="load_info">
+          <div class="com_icon">
+            <div class="icon_tag">
+              <span>구매평</span>
+              <span>MD추천</span>
+              <span>32,800P</span>
+            </div>
+          </div>
+          <div class="t_ttl">
+            <a href="https://seoulouba.co.kr/campaign/?c=1110002" target="_blank"><strong class="s_campaign_title">[구매평][테스트/가상] 예시 고양이 모래</strong></a>
+          </div>
+          <div class="t_basic">
+            <span class="basic_blue">예시 고양이 모래 대용량 1개</span>
+          </div>
+          <div class="campaign_day_people">
+            <div class="d_day"><span>D-day</span></div>
+            <div class="recruit"><span>신청 8 <span class="span_gray">/ 모집 225</span></span></div>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div id="list_more"><button id="list_more_btn" class="btn">더보기</button></div>
+  </body>
+</html>
