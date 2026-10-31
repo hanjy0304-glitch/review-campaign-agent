@@ -112,9 +112,9 @@ sites:
     name: 서울오빠
     domain: seoulouba.co.kr
     domain_source: user   # 사용자가 직접 제공한 주소
-    adapter: none
-    login_type: unknown
-    my_applications_url: null
+    adapter: experimental # 크롬 확장이 마이페이지('내 캠페인')를 읽음. 2026-11-01 공개 캠페인 목록 카드 구조 기반 파서, 로그인 화면 실측은 아직
+    login_type: mixed     # 로그인 페이지(/bbs/login.php)에 아이디·비밀번호 + 네이버·카카오 확인 (2026-11-01, 공개 페이지)
+    my_applications_url: /mypage/my_campaign.php   # 확장이 읽는 마이페이지. 비로그인으로 열면 로그인 화면으로 리다이렉트됨(2026-11-01 확인)
     id_env: SEOULOUBA_ID
     pw_env: SEOULOUBA_PW
 

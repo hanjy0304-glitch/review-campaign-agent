@@ -5,6 +5,7 @@
 import { scrapeReviewnote } from "./reviewnote_parse.js";
 import { scrapeDinnerqueen } from "./dinnerqueen_parse.js";
 import { scrapeReviewplace } from "./reviewplace_parse.js";
+import { scrapeSeoulouba } from "./seoulouba_parse.js";
 
 export const SITES = [
   {
@@ -26,6 +27,16 @@ export const SITES = [
     loggedInPrefix: "https://dinnerqueen.net/mypage",
     loginRequiredMessage: "디너의여왕 로그인이 필요합니다. 크롬에서 디너의여왕에 로그인해 주세요.",
     scrape: scrapeDinnerqueen,
+  },
+  {
+    key: "seoulouba",
+    name: "서울오빠",
+    origin: "https://seoulouba.co.kr",
+    // 마이페이지('내 캠페인'). 로그인 없이 열면 로그인 화면(/bbs/login.php)으로 넘어간다.
+    listUrl: "https://seoulouba.co.kr/mypage/my_campaign.php",
+    loggedInPrefix: "https://seoulouba.co.kr/mypage/my_campaign.php",
+    loginRequiredMessage: "서울오빠 로그인이 필요합니다. 크롬에서 서울오빠에 로그인해 주세요.",
+    scrape: scrapeSeoulouba,
   },
   {
     key: "reviewplace",
