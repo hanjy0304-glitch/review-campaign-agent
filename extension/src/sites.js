@@ -3,6 +3,8 @@
 // scrape 는 chrome.scripting.executeScript 의 func 로 페이지에 주입되므로,
 // 바깥 변수·import 에 의존하지 않는 하나의 함수여야 한다 (reviewnote_parse.js 참고).
 import { scrapeReviewnote } from "./reviewnote_parse.js";
+import { scrapeDinnerqueen } from "./dinnerqueen_parse.js";
+import { scrapeReviewplace } from "./reviewplace_parse.js";
 
 export const SITES = [
   {
@@ -14,5 +16,25 @@ export const SITES = [
     loggedInPrefix: "https://www.reviewnote.co.kr/users/my_campaign",
     loginRequiredMessage: "리뷰노트 로그인이 필요합니다. 크롬에서 리뷰노트에 로그인해 주세요.",
     scrape: scrapeReviewnote,
+  },
+  {
+    key: "dinnerqueen",
+    name: "디너의여왕",
+    origin: "https://dinnerqueen.net",
+    // 마이페이지('나의캠페인' 위젯). 로그인 없이 열면 메인(/)으로 리다이렉트된다.
+    listUrl: "https://dinnerqueen.net/mypage/widget",
+    loggedInPrefix: "https://dinnerqueen.net/mypage",
+    loginRequiredMessage: "디너의여왕 로그인이 필요합니다. 크롬에서 디너의여왕에 로그인해 주세요.",
+    scrape: scrapeDinnerqueen,
+  },
+  {
+    key: "reviewplace",
+    name: "리뷰플레이스",
+    origin: "https://www.reviewplace.co.kr",
+    // 마이페이지('내 캠페인' 탭). 로그인 없이 열면 로그인 화면(/bbs/login.php)으로 넘어간다.
+    listUrl: "https://www.reviewplace.co.kr/my/",
+    loggedInPrefix: "https://www.reviewplace.co.kr/my/",
+    loginRequiredMessage: "리뷰플레이스 로그인이 필요합니다. 크롬에서 리뷰플레이스에 로그인해 주세요.",
+    scrape: scrapeReviewplace,
   },
 ];
