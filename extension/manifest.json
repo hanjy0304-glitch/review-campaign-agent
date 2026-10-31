@@ -11,6 +11,9 @@
   ],
   "host_permissions": [
     "https://www.reviewnote.co.kr/*",
+    "https://dinnerqueen.net/*",
+    "https://www.dinnerqueen.net/*",
+    "https://www.reviewplace.co.kr/*",
     "https://api.notion.com/*"
   ],
   "background": {
