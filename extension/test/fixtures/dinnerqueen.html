@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!-- 디너의여왕 캠페인 카드 fixture. 2026-11-01 공개 캠페인 목록 화면(https://dinnerqueen.net/taste)의
+     카드 구조를 기준으로 만들었고, 실제 제목·썸네일 주소는 가짜 값으로 바꿨다.
+     마이페이지(mypage/widget)의 '나의캠페인' 위젯도 같은 카드 컴포넌트로 그려지는 것으로 보나
+     로그인 화면 캡처(tools/capture.js)로 확인 전이다. -->
+<html>
+  <body>
+    <div id="taste_list" class="dq-taste-grid mb-pd-h05 qz-col mr-b10">
+      <div class="qz-dq-card campaign qz-button fluid">
+        <div class="pos-ab qz-body2-kr--line color-white pd-005 layer-primary z-1 mr-l1 mr-t1 r-f dis-none">★</div>
+        <a class="qz-dq-card__link opa-hover" href="/taste/1110001" title="[테스트/가상] 예시 카페 신청하기">
+          <div class="qz-dq-card__link__img">
+            <img width="600" height="600" src="https://example.com/fixture/1110001.webp" alt="[테스트/가상] 예시 카페" loading="lazy">
+          </div>
+          <div class="qz-dq-card__badge-row white-nowrap">
+            <div class="dis-inline-block layer-tertiary-o r-4 pd-r05 pd-v0005">
+              <div class="qz-ico w24 mb-w20 qz_b_reels w ver-m mr-v-005 mb-mr-v0 mr-l-005 mr-r-0005"></div>
+              <p class="dis-inline-block qz-caption-kr--line ver-m color-white"><strong>릴스</strong></p>
+            </div>
+            <div class="dis-inline-block layer-tertiary-o r-4 pd-r05 pd-v0005">
+              <div class="qz-ico w24 mb-w20 qz_b_plate opa-8 ver-m mr-v-005 mb-mr-v0 mr-l-005 mr-r-005"></div>
+              <p class="dis-inline-block qz-caption-kr--line color-title opa-8 ver-m"><strong>맛집</strong></p>
+            </div>
+          </div>
+        </a>
+        <div class="qz-dq-card__text mr-t1">
+          <p class="qz-body2-kr ellipsis color-title w-600"><span class="">[테스트/가상] 예시 카페</span></p>
+          <p class="qz-caption-kr color-placeholder ellipsis w-500">예시 음료 2잔 + 디저트 1개 제공</p>
+          <div class="qz-dq-card__stats mr-t015 mb-mr-t1 dis-flex flex-dir-c g-1">
+            <div class="qz-dq-card__countdown-row dis-flex flex-dir-r flex-align-c flex-just-sb mb-flex-just-fs g-05 white-nowrap">
+              <p class="dday color-title qz-body-kr">
+                <strong class="w-800"><span class="color-primary-dq1">7</span>일 남음</strong>
+              </p>
+              <div class="dis-none mb-dis-block" style="width: 1px; height: 16px; background-color: #d1d1d9;"></div>
+              <p class="apply_badge dis-flex flex-align-c">
+                <span class="dis-flex g-0005 qz-caption-kr ver-m opa-8">
+                  <strong class="color-title">신청 19</strong><span class="color-subtitle">/</span><span class="color-subtitle">5</span>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qz-dq-card campaign qz-button fluid">
+        <a class="qz-dq-card__link opa-hover" href="/taste/1110002" title="[테스트/가상] 예시 마카롱 배송 신청하기">
+          <div class="qz-dq-card__link__img">
+            <img width="600" height="600" src="https://example.com/fixture/1110002.webp" alt="[테스트/가상] 예시 마카롱 배송" loading="lazy">
+          </div>
+          <div class="qz-dq-card__badge-row white-nowrap">
+            <div class="dis-inline-block layer-tertiary-o r-4 pd-r05 pd-v0005">
+              <p class="dis-inline-block qz-caption-kr--line color-title opa-8 ver-m"><strong>배송</strong></p>
+            </div>
+          </div>
+        </a>
+        <div class="qz-dq-card__text mr-t1">
+          <p class="qz-body2-kr ellipsis color-title w-600"><span class="">[테스트/가상] 예시 마카롱 배송</span></p>
+          <p class="qz-caption-kr color-placeholder ellipsis w-500">예시 마카롱 8구 선물세트 1박스</p>
+          <div class="qz-dq-card__stats mr-t015 mb-mr-t1 dis-flex flex-dir-c g-1">
+            <div class="qz-dq-card__countdown-row dis-flex flex-dir-r flex-align-c flex-just-sb mb-flex-just-fs g-05 white-nowrap">
+              <p class="dday color-title qz-body-kr">
+                <strong class="w-800">오늘까지</strong>
+              </p>
+              <p class="apply_badge dis-flex flex-align-c">
+                <span class="dis-flex g-0005 qz-caption-kr ver-m opa-8">
+                  <strong class="color-title">신청 4</strong><span class="color-subtitle">/</span><span class="color-subtitle">10</span>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
