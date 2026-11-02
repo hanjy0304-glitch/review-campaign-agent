@@ -152,6 +152,16 @@ def test_fetch_rows_filters_out_finished_and_paginates():
     assert fake.requests[1][2]["start_cursor"] == "c2"
 
 
+def test_fetch_rows_ignores_and_archives_test_campaign():
+    fake = FakeNotion(pages=[page("p1", title="테스트"), page("p2", title="정상체험단")])
+    store = NotionStore(make(fake), DB)
+    rows = store.fetch_rows()
+    assert [r.ref for r in rows] == ["p2"]
+    archive_reqs = [r for r in fake.requests if r[0] == "PATCH" and r[1] == "/v1/pages/p1"]
+    assert len(archive_reqs) == 1
+    assert archive_reqs[0][2] == {"archived": True}
+
+
 def test_mark_notified_and_days_left_write_only_agent_columns():
     fake = FakeNotion()
     store = NotionStore(make(fake), DB)

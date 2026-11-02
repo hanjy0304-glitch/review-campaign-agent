@@ -99,7 +99,7 @@ def format_notification(n: Notification) -> str:
 
 def format_summary(campaigns: list[Campaign], today: date) -> str | None:
     """아직 글을 쓰지 않은 선정 건을 마감 임박 순으로. 할 일이 없으면 None."""
-    todo = [c for c in campaigns if c.status in (Status.SELECTED, Status.VISITED)]
+    todo = [c for c in campaigns if not c.is_test and c.status in (Status.SELECTED, Status.VISITED)]
     if not todo:
         return None
     todo.sort(key=lambda c: (c.review_deadline is None, c.review_deadline or today))

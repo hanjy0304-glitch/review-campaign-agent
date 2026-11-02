@@ -30,3 +30,8 @@ class Campaign:
     @property
     def key(self) -> str:
         return f"{self.site}:{self.campaign_id}"
+
+    @property
+    def is_test(self) -> bool:
+        t = self.title.strip().lower()
+        return t in ("테스트", "test") or t.startswith(("[테스트]", "[test]"))
