@@ -88,6 +88,19 @@ def test_summary_sorted_by_deadline_and_skips_done():
     assert format_summary([camp(status=Status.DONE)], TODAY) is None
 
 
+def test_summary_skips_test_campaigns():
+    rows = [
+        camp(title="테스트"),
+        camp(title="test"),
+        camp(title="[테스트] 체험단"),
+        camp(title="진짜체험단", review_deadline=date(2026, 10, 20)),
+    ]
+    summary = format_summary(rows, TODAY)
+    assert summary is not None
+    assert "테스트" not in summary
+    assert "진짜체험단" in summary
+
+
 class FakeStore:
     def __init__(self, rows):
         self.rows, self.marked, self.days = rows, [], {}

@@ -6,8 +6,8 @@ from review_campaign_agent.rules import plan_notifications, today_kst
 TODAY = date(2026, 10, 17)
 
 
-def campaign(deadline=None, visit=None, notified=("selected",), status=Status.SELECTED, kind=None):
-    return Campaign("s", "1", "title", status, kind=kind, visit_date=visit, review_deadline=deadline,
+def campaign(deadline=None, visit=None, notified=("selected",), status=Status.SELECTED, kind=None, title="title"):
+    return Campaign("s", "1", title, status, kind=kind, visit_date=visit, review_deadline=deadline,
                     notified=set(notified))
 
 
@@ -110,3 +110,10 @@ def test_visit_kind_without_date_is_flagged_once():
     c.notified.add("visit_missing")
     assert kinds([c]) == []
     assert kinds([campaign(date(2026, 12, 1), kind="배송형")]) == []
+
+
+def test_test_campaigns_are_skipped():
+    test_c = campaign(date(2026, 10, 18), title="테스트")
+    test_eng = campaign(date(2026, 10, 18), title="test")
+    test_bracket = campaign(date(2026, 10, 18), title="[테스트] 식당체험단")
+    assert kinds([test_c, test_eng, test_bracket]) == []
