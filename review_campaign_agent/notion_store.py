@@ -184,7 +184,15 @@ class NotionStore:
         rows: list[Campaign] = []
         while True:
             data = self._api.request("POST", f"/databases/{self._db}/query", body)
-            rows += [page_to_campaign(p) for p in data["results"]]
+            for p in data["results"]:
+                c = page_to_campaign(p)
+                if c.is_test:
+                    try:
+                        self._api.request("PATCH", f"/pages/{c.ref}", {"archived": True})
+                    except Exception:
+                        pass
+                    continue
+                rows.append(c)
             if not data.get("has_more"):
                 return rows
             body["start_cursor"] = data["next_cursor"]

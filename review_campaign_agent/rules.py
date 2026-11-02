@@ -65,7 +65,7 @@ def plan_notifications(
     """오늘 보내야 할 알림 목록. 발송 성공 후 호출 측이 notification.keys 를 notified 에 기록해야 한다."""
     out: list[Notification] = []
     for c in campaigns:
-        if c.status not in (Status.SELECTED, Status.VISITED):
+        if c.is_test or c.status not in (Status.SELECTED, Status.VISITED):
             continue
         deadline_n = _deadline_notification(c, today, reminder_days)
         if "selected" not in c.notified:
