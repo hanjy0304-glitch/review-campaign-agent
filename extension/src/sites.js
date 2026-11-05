@@ -6,8 +6,20 @@ import { scrapeReviewnote } from "./reviewnote_parse.js";
 import { scrapeDinnerqueen } from "./dinnerqueen_parse.js";
 import { scrapeReviewplace } from "./reviewplace_parse.js";
 import { scrapeSeoulouba } from "./seoulouba_parse.js";
+import { scrapeGangnam } from "./gangnam_parse.js";
 
 export const SITES = [
+  {
+    key: "gangnam",
+    name: "강남맛집",
+    // 강남맛집.net(punycode). gangnam-review.net 은 이 주소로 301 리다이렉트되므로 리다이렉트 뒤 주소를 쓴다.
+    origin: "https://xn--939au0g4vj8sq.net",
+    // 마이페이지('나의 캠페인'). 로그인 없이 열면 alert 뒤 로그인 화면(/bbs/login.php)으로 넘어간다.
+    listUrl: "https://xn--939au0g4vj8sq.net/theme/go/mypage/",
+    loggedInPrefix: "https://xn--939au0g4vj8sq.net/theme/go/mypage/",
+    loginRequiredMessage: "강남맛집 로그인이 필요합니다. 크롬에서 강남맛집에 로그인해 주세요.",
+    scrape: scrapeGangnam,
+  },
   {
     key: "reviewnote",
     name: "리뷰노트",
