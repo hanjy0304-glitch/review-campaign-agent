@@ -46,7 +46,7 @@
 
 `main` 브랜치 (병합됨):
 - `config/sites.yaml` 사이트 카탈로그 18개 (`adapter: none`, `domain_source`로 도메인 근거 표시), `.env.example`, `config/user.example.yaml`
-- 설정 마법사 `python -m review_campaign_agent setup` (대화형 + `--sites` 비대화형), 설정 로딩, 알림 규칙(`rules.py`: 신규 선정/글 마감 D-3·D-1·D-day/마감 지남/마감일 미입력/방문일 D-1·D-day/방문형 방문일 미입력)
+- 설정 마법사 `python -m review_campaign_agent setup` (대화형 + `--sites` 비대화형), 설정 로딩, 알림 규칙(`rules.py`: 신규 선정/글 마감 D-3·D-1·D-day/기간 지난 체험단 완료 확인 요청(자동 종료 없음, 사람이 진행단계를 바꿔야 종료)/마감일 미입력/방문일 D-1·D-day/방문형 방문일 미입력)
 - 개인정보 차단 장치: `.gitignore`, `.githooks/pre-commit`
 
 `main` 브랜치에 PR #2로 병합됨 (2026-10-17):

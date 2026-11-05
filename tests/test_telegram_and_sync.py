@@ -70,7 +70,8 @@ def test_message_formats():
     sel = format_notification(Notification(c, "new_selection", ("selected",), 3))
     assert "선정" in sel and "10/20 (D-3)" in sel and "방문일 10/18" in sel
     assert "입력해 주세요" in format_notification(Notification(camp(), "new_selection", ("selected",), None))
-    assert "지났어요" in format_notification(Notification(c, "overdue", ("overdue",), -2))
+    done = format_notification(Notification(c, "check_done", ("check_done",), -2))
+    assert "지났어요" in done and "마감됐나요" in done and "작성완료" in done
     assert "마감일을 입력" in format_notification(Notification(camp(), "deadline_missing", ("deadline_missing",)))
     assert "방문일을 입력" in format_notification(Notification(camp(), "visit_missing", ("visit_missing",)))
 
@@ -86,6 +87,21 @@ def test_summary_sorted_by_deadline_and_skips_done():
     assert lines[0] == "📋 오늘의 체험단 (3건)"
     assert [l.split(" (")[0].lstrip("• ") for l in lines[1:]] == ["먼저", "나중", "미정"]
     assert format_summary([camp(status=Status.DONE)], TODAY) is None
+
+
+def test_summary_moves_overdue_to_confirmation_section():
+    # 기간이 지난 건은 할 일 목록에서 빼고, 자동 종료하지 말고 완료 확인을 요청하는 칸으로 옮긴다.
+    rows = [
+        camp(title="지난것", review_deadline=date(2026, 10, 10)),
+        camp(title="진행중", review_deadline=date(2026, 10, 20)),
+    ]
+    lines = format_summary(rows, TODAY).splitlines()
+    assert lines[0] == "📋 오늘의 체험단 (1건)" and "지난것" not in lines[0]
+    assert "진행중" in lines[1] and "지난것" not in lines[1]
+    assert any("마감됐나요" in l and "작성완료" in l for l in lines)
+    assert any(l.startswith("• ") and "지난것" in l and "지남" in l for l in lines)
+    # 지난 것만 있어도 확인 요청은 보낸다
+    assert "마감됐나요" in format_summary([camp(title="지난것", review_deadline=date(2026, 10, 10))], TODAY)
 
 
 def test_summary_skips_test_campaigns():
