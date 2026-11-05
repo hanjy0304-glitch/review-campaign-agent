@@ -18,7 +18,7 @@ def today_kst(now: datetime | None = None) -> date:
 @dataclass(frozen=True)
 class Notification:
     campaign: Campaign
-    # new_selection | deadline | overdue | deadline_missing | visit | visit_missing
+    # new_selection | deadline | check_done | deadline_missing | visit | visit_missing
     kind: str
     keys: tuple[str, ...]  # 발송에 성공한 뒤 campaign.notified 에 기록할 키
     days_left: int | None = None  # deadline/visit: 남은 일수
@@ -35,7 +35,9 @@ def _deadline_notification(c: Campaign, today: date, reminder_days: tuple[int, .
         return Notification(c, "deadline_missing", ("deadline_missing",))
     days_left = (c.review_deadline - today).days
     if days_left < 0:
-        return None if "overdue" in c.notified else Notification(c, "overdue", ("overdue",), days_left)
+        # 기간이 지났다고 봇이 스스로 종료 처리하지 않는다. 완료 여부는 사람에게 물어보고,
+        # 진행단계가 '작성완료'로 바뀌어야(사람이 직접) 알림 대상에서 빠진다.
+        return None if "check_done" in c.notified else Notification(c, "check_done", ("check_done",), days_left)
     keys = _threshold_keys(days_left, reminder_days, "d")
     if any(k not in c.notified for k in keys):
         return Notification(c, "deadline", keys, days_left)
@@ -69,8 +71,10 @@ def plan_notifications(
             continue
         deadline_n = _deadline_notification(c, today, reminder_days)
         if "selected" not in c.notified:
-            # 신규 선정 알림에 마감 정보를 합쳐서 한 번에 보낸다
-            keys = ("selected",) + (deadline_n.keys if deadline_n else ())
+            # 신규 선정 알림에 마감 정보를 합쳐서 한 번에 보낸다.
+            # 완료 확인 요청(check_done)은 질문이므로 선정 알림에 섞지 않고 따로 보낸다.
+            merge = deadline_n if deadline_n and deadline_n.kind != "check_done" else None
+            keys = ("selected",) + (merge.keys if merge else ())
             out.append(Notification(c, "new_selection", keys, deadline_n.days_left if deadline_n else None))
         elif deadline_n:
             out.append(deadline_n)

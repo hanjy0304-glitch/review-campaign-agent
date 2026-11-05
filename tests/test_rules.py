@@ -73,15 +73,25 @@ def test_missed_threshold_sends_one_notification():
     assert kinds([c]) == []
 
 
-def test_overdue_and_missing_deadline_notified_once():
+def test_overdue_asks_for_confirmation_once_and_waits_for_human():
+    # 기간이 지났으면 자동 종료하지 않고 완료 확인을 요청한다.
     c = campaign(date(2026, 10, 10))
-    assert kinds([c]) == ["overdue"]
-    c.notified.add("overdue")
-    assert kinds([c]) == []
+    assert kinds([c]) == ["check_done"]
+    c.notified.add("check_done")
+    assert kinds([c]) == []  # 같은 질문을 매번 반복하지 않는다. 종료는 사람이 진행단계를 바꿔야 한다.
     m = campaign(None)
     assert kinds([m]) == ["deadline_missing"]
     m.notified.add("deadline_missing")
     assert kinds([m]) == []
+
+
+def test_check_done_is_not_merged_into_new_selection():
+    c = campaign(date(2026, 10, 10), notified=())  # 마감일이 이미 지난 채로 표에 등장한 행
+    (n,) = plan_notifications([c], TODAY)
+    assert n.kind == "new_selection" and set(n.keys) == {"selected"} and n.days_left == -7
+    c.notified.update(n.keys)
+    (n,) = plan_notifications([c], TODAY)
+    assert n.kind == "check_done" and n.days_left == -7
 
 
 def test_visit_reminders_d1_and_dday():

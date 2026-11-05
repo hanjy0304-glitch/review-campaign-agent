@@ -85,8 +85,11 @@ def format_notification(n: Notification) -> str:
     if n.kind == "deadline":
         head = "⏰ 글 마감 오늘!" if n.days_left == 0 else f"⏰ 글 마감 {_when(n.days_left or 0)}"
         return f"{head}\n{_title(c)}\n마감 {_d(c.review_deadline)}{_tail(c)}"
-    if n.kind == "overdue":
-        return f"⚠️ 글 마감이 지났어요 ({-(n.days_left or 0)}일 전)\n{_title(c)}\n마감 {_d(c.review_deadline)}{_tail(c)}"
+    if n.kind == "check_done":
+        return (
+            f"⚠️ 글 마감이 지났어요 ({-(n.days_left or 0)}일 전)\n{_title(c)}\n마감 {_d(c.review_deadline)}{_tail(c)}\n"
+            "이 체험단 마감됐나요? 완료됐으면 Notion 진행단계를 '작성완료'로 바꿔 주세요 — 바꾸면 알림에서 빠져요"
+        )
     if n.kind == "deadline_missing":
         return f"❓ 글 마감일을 입력해 주세요\n{_title(c)}{_tail(c)}"
     if n.kind == "visit":
@@ -98,18 +101,32 @@ def format_notification(n: Notification) -> str:
 
 
 def format_summary(campaigns: list[Campaign], today: date) -> str | None:
-    """아직 글을 쓰지 않은 선정 건을 마감 임박 순으로. 할 일이 없으면 None."""
+    """아직 글을 쓰지 않은 선정 건을 마감 임박 순으로. 기간이 지난 건은 종료 처리하지 않고
+    완료 확인을 요청하는 칸으로 옮긴다(사람이 진행단계를 바꿔야 목록에서 빠진다). 할 일이 하나도 없으면 None."""
     todo = [c for c in campaigns if not c.is_test and c.status in (Status.SELECTED, Status.VISITED)]
     if not todo:
         return None
-    todo.sort(key=lambda c: (c.review_deadline is None, c.review_deadline or today))
-    lines = [f"📋 오늘의 체험단 ({len(todo)}건)"]
-    for c in todo:
-        if c.review_deadline is None:
-            when = "마감일 미정"
-        else:
-            days = (c.review_deadline - today).days
-            when = f"마감 {_d(c.review_deadline)} ({'지남' if days < 0 else _when(days)})"
-        visit = f" · 방문 {_d(c.visit_date)}" if c.visit_date and c.status == Status.SELECTED else ""
-        lines.append(f"• {_title(c)} — {when}{visit}")
+    open_items = [c for c in todo if c.review_deadline is None or c.review_deadline >= today]
+    overdue = [c for c in todo if c.review_deadline is not None and c.review_deadline < today]
+    lines = []
+    if open_items:
+        open_items.sort(key=lambda c: (c.review_deadline is None, c.review_deadline or today))
+        lines.append(f"📋 오늘의 체험단 ({len(open_items)}건)")
+        for c in open_items:
+            if c.review_deadline is None:
+                when = "마감일 미정"
+            else:
+                when = f"마감 {_d(c.review_deadline)} ({_when((c.review_deadline - today).days)})"
+            visit = f" · 방문 {_d(c.visit_date)}" if c.visit_date and c.status == Status.SELECTED else ""
+            lines.append(f"• {_title(c)} — {when}{visit}")
+    if overdue:
+        overdue.sort(key=lambda c: c.review_deadline)
+        if lines:
+            lines.append("")
+        lines.append(
+            f"☑️ 기간이 지난 체험단 ({len(overdue)}건) — 마감됐나요? "
+            "완료됐으면 진행단계를 '작성완료'로 바꿔 주세요 (바꾸면 이 목록에서 빠져요)"
+        )
+        for c in overdue:
+            lines.append(f"• {_title(c)} — 마감 {_d(c.review_deadline)} 지남")
     return "\n".join(lines)
