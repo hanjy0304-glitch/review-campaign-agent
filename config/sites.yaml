@@ -11,10 +11,10 @@ sites:
   - key: gangnam
     name: 강남맛집
     domain: gangnam-review.net
-    domain_source: search   # 검색 결과에 사이트 캠페인 페이지 확인. 실제 접속은 강남맛집.net(punycode)으로 리다이렉트됨
-    adapter: none
-    login_type: unknown     # 2026-10-30 재확인: 외부 네트워크에서 접속 불가(ConnectTimeout). 로그인 방식은 사용자 PC에서만 확인 가능
-    my_applications_url: null
+    domain_source: adapter_tested   # 2026-11-06 공개 페이지 실제 접속 확인(확장 실행은 아직): gangnam-review.net → 강남맛집.net(punycode xn--939au0g4vj8sq.net) 301. 목록 /cp/, 상세 /cp/?id=번호, 로그인 /bbs/login.php, 마이페이지 /theme/go/mypage/
+    adapter: experimental   # 크롬 확장이 마이페이지('나의 캠페인')를 읽음. 2026-11-06 공개 캠페인 목록 카드 구조(/cp/ 목록과 #c_box ul li .textArea) 기반 파서, 로그인 화면 실측은 아직
+    login_type: mixed       # 로그인 페이지(/bbs/login.php)에 아이디·비밀번호(mb_id·mb_password) + 카카오·네이버·구글 소셜 버튼 확인 (2026-11-06, 공개 페이지)
+    my_applications_url: /theme/go/mypage/   # 확장이 읽는 마이페이지. 비로그인으로 열면 alert 뒤 /bbs/login.php 로 replace 된다(2026-11-06 확인)
     id_env: GANGNAM_ID
     pw_env: GANGNAM_PW
 

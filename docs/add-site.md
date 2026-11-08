@@ -27,10 +27,15 @@
 6. **기록** — `config/sites.yaml`의 그 사이트 칸을 고칩니다: `adapter: experimental`,
    `login_type`(확인된 것만), `my_applications_url`(확장이 여는 주소).
 
-## 다음 후보 (2026-11-01 기준)
+## 다음 후보 (2026-11-06 기준)
 
-- **강남맛집** — 리뷰노트 다음으로 선정 이력이 많은 사이트. 단, 외부 네트워크에서 접속이 막혀
-  화면 구조 확인도 캡처도 사용자 PC에서만 가능합니다.
+- **강남맛집은 파서가 등록돼 있습니다** (`extension/src/gangnam_parse.js`). 2026-11-06 공개 캠페인 목록
+  (https://강남맛집.net/cp/) 의 카드 구조(`li.list_item` · `#c_box ul li` 안의 `.textArea`)를 기준으로 만들었고,
+  마이페이지(`/theme/go/mypage/`)도 같은 카드 스킨(`#c_box ul li .textArea`)을 쓰는 것을 테마 CSS로 확인했습니다.
+  다만 로그인한 마이페이지 화면은 아직 실측 전이라, PC에서 확장의 `지금 수집`을 한 번 돌려 행이 만들어지는지
+  확인해야 합니다. 이상이 있으면 로그인 화면 캡처(`tools/capture.js`) 결과로 고치면 됩니다.
+  주의: `gangnam-review.net` 은 강남맛집.net(punycode `xn--939au0g4vj8sq.net`)으로 301 리다이렉트되므로
+  `sites.js` 에는 리다이렉트 뒤 주소를 적어야 로그인 확인(`loggedInPrefix`)이 통과합니다.
 - **디너의여왕·리뷰플레이스는 파서가 등록돼 있습니다** (`extension/src/dinnerqueen_parse.js`,
   `extension/src/reviewplace_parse.js`). 다만 공개 캠페인 목록 화면의 카드 구조를 기준으로 만든 것이라,
   로그인된 마이페이지에서 확장의 `지금 수집`을 한 번 돌려 실제로 행이 만들어지는지 확인해야 합니다.
