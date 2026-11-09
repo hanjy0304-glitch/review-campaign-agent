@@ -19,7 +19,9 @@ test("reviewnote 가 목록에 있다", () => {
 
 test("디너의여왕·리뷰플레이스·서울오빠 가 목록에 있다", () => {
   assert.ok(SITES.some((s) => s.key === "dinnerqueen" && s.name === "디너의여왕"));
-  assert.ok(SITES.some((s) => s.key === "reviewplace" && s.name === "리뷰플레이스"));
+  const rp = SITES.find((s) => s.key === "reviewplace");
+  assert.ok(rp && rp.name === "리뷰플레이스");
+  assert.equal(rp.listUrl, "https://www.reviewplace.co.kr/my/cmp_select.php");
   assert.ok(SITES.some((s) => s.key === "seoulouba" && s.name === "서울오빠"));
 });
 

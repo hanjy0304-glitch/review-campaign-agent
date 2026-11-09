@@ -22,9 +22,12 @@ export async function scrapeReviewplace(options = {}) {
   function readCards() {
     const cards = new Map();
     for (const a of document.querySelectorAll('a[href*="/pr/?id="]')) {
-      const href = a.getAttribute("href") || "";
-      const id = (href.match(/[?&]id=(\d+)/) || [])[1];
+      const rawHref = a.getAttribute("href") || "";
+      const id = (rawHref.match(/[?&]id=(\d+)/) || [])[1];
       if (!id) continue;
+      const href = rawHref.startsWith("http")
+        ? new URL(rawHref).pathname + new URL(rawHref).search
+        : rawHref;
       if (!cards.has(id)) cards.set(id, { el: cardFor(a), href });
     }
     const out = [];
