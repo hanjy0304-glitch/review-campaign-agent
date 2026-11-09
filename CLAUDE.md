@@ -55,7 +55,8 @@
 
 `feat/add-server-collector` (2026-11-09, PR 발행): 서버(GitHub Actions) 수집기.
 - `review_campaign_agent/collectors/` — 리뷰플레이스 로그인(`/bbs/login_check.php`) 후 `/my/cmp_select.php` 를 읽어 `Campaign` 으로 파싱. 계정은 `REVIEWPLACE_ID` / `REVIEWPLACE_PW` 환경변수로만 받고 로그에 남기지 않는다.
-- 명령 `python -m review_campaign_agent collect [--dry-run]` → `NotionStore.upsert_collected` 로 반영. `run.yml` 은 알림 전에 수집 단계를 먼저 돌린다(실패해도 알림은 계속). `connections.yml` 에 `collect-check`(저장 없이 확인) 추가.
+- 명령 `python -m review_campaign_agent collect [--dry-run]` → `NotionStore.upsert_collected` 로 반영.
+- **워크플로 파일은 AI가 푸시할 수 없다:** GitHub App 토큰에 `workflows` 권한이 없어 `.github/workflows/*` 커밋이 403 으로 거부된다(2026-11-09 실측, push 와 Contents API 모두). 그래서 수집 워크플로는 `docs/collect-workflow.yml` 에 두고, 사용자가 GitHub 웹에서 `.github/workflows/collect.yml` 로 한 번 저장해 켜는 방식이다. 스케줄(한국시간 08:45·17:45)은 알림(09:00·18:00) 전에 끝나게 잡았다.
 - 테스트: `tests/test_collector.py` (httpx.MockTransport, 로그인 성공/실패·쿠키 전달·파싱·건너뜀). **실제 사이트 로그인은 아직 검증 못 함** — 사용자가 Secrets 를 등록한 뒤 `collect-check` 로 확인해야 한다.
 
 아직 없음: 리뷰플레이스 외 사이트의 수집(확장·서버 모두), gitleaks 검사, LICENSE, SECURITY.md, 템플릿 저장소 설정.

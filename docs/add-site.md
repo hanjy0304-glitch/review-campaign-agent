@@ -38,11 +38,12 @@
    로그인 세션(쿠키) 유지, 환경변수 읽기(`<KEY>_ID` / `<KEY>_PW`), 계정 값 미출력은 `base.py` 가 맞습니다.
    파싱은 클래스 이름이 아니라 링크 주소·문구(`D-n`, `오늘마감`)로 카드를 찾습니다 (`reviewplace.py` 참고).
 3. **등록** — `review_campaign_agent/collectors/__init__.py` 의 `COLLECTORS` 에 추가합니다.
-4. **워크플로우** — `.github/workflows/run.yml` 의 `Collect (서버 수집)` 단계 env 에 `<KEY>_ID` / `<KEY>_PW` 를 넣고,
-   `connections.yml` 의 `collect-check` 에도 같은 값을 넣습니다.
+4. **워크플로우** — 수집을 정해진 시간에 자동으로 돌리려면 `.github/workflows/collect.yml` 에 실행 단계를 둡니다.
+   현재 내용은 [collect-workflow.yml](collect-workflow.yml) 에 있고, GitHub App 토큰은 워크플로 파일을 푸시할 권한이 없어서
+   사용자가 GitHub 웹에서 그 내용을 `.github/workflows/collect.yml` 로 한 번 저장하는 방식입니다. env 에 `<KEY>_ID` / `<KEY>_PW` 를 넣습니다.
 5. **테스트** — `tests/test_collector.py` 처럼 `httpx.MockTransport` 로 로그인 성공·실패·파싱을 검증합니다.
    실제 화면에서 받은 HTML 은 개인정보를 가린 것만 커밋하고, 원본은 `fixtures_private/`(gitignore)에만 둡니다.
-6. **확인** — 사용자가 Secrets 를 등록한 뒤 Actions → **연결 확인** → `collect-check` 로 먼저 확인합니다(표에 저장하지 않음).
+6. **확인** — 사용자가 Secrets 를 등록한 뒤 Actions → **리뷰플레이스 서버 수집** → **Run workflow** 로 먼저 확인합니다(기본값 `확인만`, 표에 저장하지 않음).
 
 ## 다음 후보 (2026-11-06 기준)
 

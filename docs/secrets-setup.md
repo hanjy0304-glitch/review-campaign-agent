@@ -28,12 +28,17 @@ Secrets 는 GitHub 이 비밀 값을 저장하는 기능입니다. 한 번 등�
 | `REVIEWPLACE_ID` | 리뷰플레이스 아이디 |
 | `REVIEWPLACE_PW` | 리뷰플레이스 비밀번호 |
 
+**일회 더 필요한 것:** 계정을 등록해도 수집은 저절로 돌지 않습니다. [수집 워크플로 파일](collect-workflow.yml) 내용을 내 저장소의 `.github/workflows/collect.yml` 로 한 번 저장하면, 그 다음부터 정해진 시간에 자동으로 돕니다.
+  1. 내 저장소 → **Add file** → **Create new file**
+  2. 파일 이름 칸에 `.github/workflows/collect.yml` 입력 (이름에 `/` 를 넣으면 폴더가 자동으로 생깁니다)
+  3. [collect-workflow.yml](collect-workflow.yml) 내용 전체를 붙여넣고 **Commit changes**
+
 **알아 두세요.** 이 2개는 사이트 로그인 정보라서 GitHub Secrets 에 보관됩니다. Secrets 는 등록한 뒤 값을 다시 볼 수 없고, 그 저장소의 Actions 만 값을 쓸 수 있습니다. 다만 다른 토큰보다 민감한 값이므로,
 
 - 저장소를 **Private(비공개)** 으로 둔 상태에서만 등록하세요. 공개 저장소에서는 실행 기록(Actions 로그)이 누구에게나 보입니다.
 - 자동 로그인을 원하지 않으면 등록하지 않아도 됩니다. 그때는 지금처럼 PC의 크롬 확장으로 수집합니다.
 - 사이트 비밀번호를 바꾸면 같은 이름으로 다시 등록하세요.
-- 등록이 잘 됐는지는 **연결 확인** 워크플로의 `collect-check` 로 확인합니다. 선정 내역을 읽어 오기만 하고 표에는 저장하지 않습니다.
+- 등록이 잘 됐는지는 저장소 **Actions** 탭 → **리뷰플레이스 서버 수집** → **Run workflow** 로 확인합니다. `확인만` 이 체크된 채로 실행하면 선정 내역을 읽어 오기만 하고 표에는 저장하지 않습니다.
 
 ## 등록 방법 (값마다 반복)
 
@@ -48,7 +53,7 @@ Secrets 는 GitHub 이 비밀 값을 저장하는 기능입니다. 한 번 등�
 
 ## 확인하기
 - Secrets 목록에 이름 4개가 보이면 등록은 끝났습니다. 값이 맞는지는 [README 6단계 연결 확인](../README.md#6단계-연결-확인)에서 확인합니다.
-- 서버 자동 수집을 켰다면 `REVIEWPLACE_ID`·`REVIEWPLACE_PW` 도 목록에 보여야 하고, **연결 확인** → `collect-check` 로 확인합니다.
+- 서버 자동 수집을 켰다면 `REVIEWPLACE_ID`·`REVIEWPLACE_PW` 도 목록에 보여야 하고, 저장소 Actions 탭의 **리뷰플레이스 서버 수집** 에서 확인합니다.
 
 ## 값이 노출됐다면
 노출된 값은 새로 발급하고 다시 등록하세요.
