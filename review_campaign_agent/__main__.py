@@ -4,6 +4,7 @@ import os
 import httpx
 
 from .catalog import CONFIG_DIR, load_catalog
+from .collectors import format_reports, has_error, run_collection
 from .config import ConfigError, load_user_config, notify_days, required_env_vars, resolve_sites
 from .envfile import load_dotenv
 from .notion_store import NotionClient, NotionError, NotionStore, create_database, parse_notion_id
@@ -144,6 +145,28 @@ def _inspect(args: argparse.Namespace) -> int:
     return 0
 
 
+def _collect(args: argparse.Namespace) -> int:
+    """계정 환경변수가 있는 사이트에서 선정 내역을 서버에서 직접 수집해 Notion 표에 반영한다."""
+    store = None
+    if not args.dry_run:
+        store = NotionStore(NotionClient(_env("NOTION_TOKEN")), _env("NOTION_DATABASE_ID"))
+    try:
+        reports = run_collection(store, load_catalog(), os.environ, today_kst(), dry_run=args.dry_run)
+    except (NotionError, httpx.HTTPError) as e:
+        print(f"저장 실패: {e if isinstance(e, NotionError) else type(e).__name__}")
+        return 1
+    if not reports:
+        print("서버 수집을 지원하는 사이트가 아직 없습니다.")
+        return 0
+    for line in format_reports(reports):
+        print(line)
+    if any(r.status == "ok" and r.count == 0 for r in reports):
+        print("(0건이면 선정된 체험단이 없는 것이고, 있다면 사이트 화면 구조가 바뀌었을 수 있습니다.)")
+    if args.dry_run:
+        print("(미리보기) Notion 표에는 저장하지 않았습니다.")
+    return 1 if has_error(reports) else 0
+
+
 def _run(args: argparse.Namespace) -> int:
     try:
         reminder_days, visit_days = notify_days(load_user_config())
@@ -186,6 +209,8 @@ def main() -> int:
     ins = sub.add_parser("inspect", help="로그인 없이 볼 수 있는 공개 페이지의 구조 요약")
     ins.add_argument("url", help="카탈로그 사이트의 https 주소")
     ins.add_argument("--browser", action="store_true", help="실제 브라우저로 열어 자바스크립트 실행 후 구조 확인")
+    col = sub.add_parser("collect", help="계정이 설정된 사이트에서 선정 내역을 서버에서 직접 수집해 Notion 에 반영")
+    col.add_argument("--dry-run", action="store_true", help="저장하지 않고 로그인·수집 결과만 확인")
     run = sub.add_parser("run", help="Notion 을 읽어 오늘 알림 보내기")
     run.add_argument("--dry-run", action="store_true", help="보내거나 기록하지 않고 내용만 출력")
     run.add_argument("--summary", action="store_true", help="오늘의 할 일 요약도 보내기 (아침 실행용)")
@@ -198,6 +223,7 @@ def main() -> int:
         "telegram-test": _telegram_test,
         "probe": _probe,
         "inspect": lambda: _inspect(args),
+        "collect": lambda: _collect(args),
         "run": lambda: _run(args),
     }[args.command]()
 

@@ -42,7 +42,7 @@ sites:
     name: 리뷰플레이스
     domain: reviewplace.co.kr
     domain_source: search   # 앱스토어 등록 정보
-    adapter: experimental # 크롬 확장이 마이페이지('선정된 캠페인')를 읽음. 2026-11-09 사용자 실측 URL 반영
+    adapter: experimental # 크롬 확장·서버 수집기(review_campaign_agent/collectors)가 '선정된 캠페인'을 읽음. 2026-11-09 사용자 실측 URL 반영. 서버 로그인은 미검증
     login_type: mixed       # 로그인 페이지(/bbs/login.php)에 아이디·비밀번호 + 네이버·Apple 소셜 링크 확인 (2026-10-30, 공개 페이지)
     my_applications_url: /my/cmp_select.php   # 확장이 읽는 마이페이지('선정된 캠페인'). 비로그인으로 열면 로그인 화면으로 넘어감(2026-11-09 확인)
     id_env: REVIEWPLACE_ID

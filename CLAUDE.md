@@ -53,7 +53,13 @@
 - Notion 표 양식·저장소(`notion_*.py`), 텔레그램(`telegram.py`), 실행기(`sync.py`, 명령 `run`), `notion-init`·`telegram-chat-id`·`telegram-test`, 사용자 문서(README, `docs/`), 워크플로우 `tests.yml`·`run.yml`·`connections.yml`
 - **실제 Notion·텔레그램 API로는 아직 검증하지 못했습니다** (테스트는 HTTP 모킹). `연결 확인` 버튼은 기본 브랜치에 있어야 Actions 탭에 나타나므로 검증 전에 병합했습니다. **남은 일: 사용자가 Secrets를 등록하고 `연결 확인`(`telegram-test`, `notion-check`)으로 실제 연결을 확인하는 것.** 오류가 나면 후속 PR로 고칩니다.
 
-아직 없음: 어댑터(핵심), gitleaks 검사, LICENSE, SECURITY.md, 템플릿 저장소 설정.
+`feat/add-server-collector` (2026-11-09, PR 발행): 서버(GitHub Actions) 수집기.
+- `review_campaign_agent/collectors/` — 리뷰플레이스 로그인(`/bbs/login_check.php`) 후 `/my/cmp_select.php` 를 읽어 `Campaign` 으로 파싱. 계정은 `REVIEWPLACE_ID` / `REVIEWPLACE_PW` 환경변수로만 받고 로그에 남기지 않는다.
+- 명령 `python -m review_campaign_agent collect [--dry-run]` → `NotionStore.upsert_collected` 로 반영.
+- **워크플로 파일은 AI가 푸시할 수 없다:** GitHub App 토큰에 `workflows` 권한이 없어 `.github/workflows/*` 커밋이 403 으로 거부된다(2026-11-09 실측, push 와 Contents API 모두). 그래서 수집 워크플로는 `docs/collect-workflow.yml` 에 두고, 사용자가 GitHub 웹에서 `.github/workflows/collect.yml` 로 한 번 저장해 켜는 방식이다. 스케줄(한국시간 08:00·17:00)은 알림(09:00·18:00)보다 1시간 앞서 잡았다.
+- 테스트: `tests/test_collector.py` (httpx.MockTransport, 로그인 성공/실패·쿠키 전달·파싱·건너뜀). **실제 사이트 로그인은 아직 검증 못 함** — 사용자가 Secrets 를 등록한 뒤 `collect-check` 로 확인해야 한다.
+
+아직 없음: 리뷰플레이스 외 사이트의 수집(확장·서버 모두), gitleaks 검사, LICENSE, SECURITY.md, 템플릿 저장소 설정.
 
 공개 전 필수: gitleaks로 커밋 기록 검사 → LICENSE 추가 → 저장소를 Template repository로 설정(README의 "Use this template" 안내가 성립하려면 필요) → 공개 전환.
 
@@ -70,6 +76,7 @@
 9. 요청 범위를 넘는 기능이나 파일을 추가하지 않습니다.
 10. **이 저장소는 메인테이너 개인용이 아니라 공개 템플릿입니다.** 모든 기능은 일반 유저가 템플릿을 복사한 자기 저장소에서, 비개발자가 GitHub 웹(Actions 버튼·Secrets)만으로 쓸 수 있어야 합니다. 설계할 때마다 확인: ① 유저 저장소에서 동작하는가(메인테이너 계정·값에 의존하지 않는가) ② 설정을 코드 수정 없이 하는가 ③ 공개 저장소 Actions 로그·artifact에 개인정보가 나오지 않는가 ④ 개발 전용 장치(예: `claude/**` 푸시 트리거)가 유저 복사본에 남지 않는가 ⑤ Actions 사용 시간이 적당한가(브라우저 설치는 느림).
 11. **보안 최우선 (사용자 지시, 2026-10-17):** 체험단 사이트·네이버 등 **계정 아이디/비밀번호/로그인 쿠키/세션은 유저 기기 밖으로 나가면 안 됩니다.** GitHub Secrets, GitHub Actions, Claude 클라우드 세션, Notion, 텔레그램 어디에도 저장·전송하지 않습니다. 따라서 "Secrets에 사이트 계정이나 쿠키 등록 → Actions가 로그인" 방식은 **채택하지 않습니다**(이 문서 앞부분에 그렇게 적힌 곳은 이 규칙이 우선). 허용되는 것: 유저 기기 안에서 이미 로그인된 상태를 쓰는 방식(예: 유저 PC 브라우저 확장), 로그인이 필요 없는 방식(폰 알림 전달). 클라우드로 나가도 되는 것은 선정 결과(캠페인명·마감일 등)와 Notion·텔레그램 연동 토큰뿐입니다. 로그인 후 화면 구조가 필요하면 메인테이너가 자기 PC에서 저장하고 개인정보를 가린 뒤에만 공유합니다.
+   - **2026-11-09 사용자 결정(예외):** PC 크롬 확장의 ZIP 수동 업데이트가 번거롭다는 이유로 주연님이 '서버(GitHub Actions) 완전 자동 수집' 방식을 직접 선택했습니다. 이에 따라 **리뷰플레이스 한 곳에 한해** 사용자가 자기 저장소 Secrets 에 계정을 등록하면 Actions 가 로그인해 수집하는 `collect` 방식을 옵트인으로 제공합니다. 등록하지 않으면 기존 기기 내 수집만 동작합니다. 새 사이트를 이 방식으로 추가할 때도 사용자가 직접 선택한 경우에만 안내하고, 공개 저장소에서는 권하지 않습니다. 계정 값은 코드·문서·테스트·로그·커밋에 절대 쓰지 않습니다.
 
 ## 6. 작업 방식
 
