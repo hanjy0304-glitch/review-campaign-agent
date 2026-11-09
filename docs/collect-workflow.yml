@@ -1,4 +1,4 @@
-name: 리뷰플레이스 서버 수집
+name: 체험단 서버 수집
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 이 파일은 "복사해서 쓰는" 워크플로 파일입니다. (저장소의 .github/workflows/ 밖에 있어서 저절로 실행되지 않습니다)
@@ -9,7 +9,13 @@ name: 리뷰플레이스 서버 수집
 #      (이름에 / 를 넣으면 폴더가 자동으로 만들어집니다)
 #   3. 아래 내용 전체를 그대로 붙여넣고 → Commit changes
 #
-# 필요한 Secrets: NOTION_TOKEN, NOTION_DATABASE_ID, REVIEWPLACE_ID, REVIEWPLACE_PW
+# 필요한 Secrets: NOTION_TOKEN, NOTION_DATABASE_ID + 아래 사이트 계정 중 쓰는 것만
+#   GANGNAM_ID / GANGNAM_PW              (강남맛집)
+#   DINNERQUEEN_ID / DINNERQUEEN_PW      (디너의여왕, 아이디=가입 이메일)
+#   REVIEWPLACE_ID / REVIEWPLACE_PW      (리뷰플레이스)
+#   POPOMON_ID / POPOMON_PW              (포포몬)
+#   SEOULOUBA_ID / SEOULOUBA_PW          (서울오빠)
+#   등록한 사이트만 수집하고, 등록하지 않은 사이트는 '건너뜀'으로 지나갑니다.
 #   (등록 방법: docs/secrets-setup.md)
 #
 # 시각을 바꾸려면 cron 을 고치세요. cron 은 UTC 기준입니다 (한국시간 - 9시간).
@@ -42,18 +48,23 @@ jobs:
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          GANGNAM_ID: ${{ secrets.GANGNAM_ID }}
+          GANGNAM_PW: ${{ secrets.GANGNAM_PW }}
+          DINNERQUEEN_ID: ${{ secrets.DINNERQUEEN_ID }}
+          DINNERQUEEN_PW: ${{ secrets.DINNERQUEEN_PW }}
           REVIEWPLACE_ID: ${{ secrets.REVIEWPLACE_ID }}
           REVIEWPLACE_PW: ${{ secrets.REVIEWPLACE_PW }}
+          POPOMON_ID: ${{ secrets.POPOMON_ID }}
+          POPOMON_PW: ${{ secrets.POPOMON_PW }}
+          SEOULOUBA_ID: ${{ secrets.SEOULOUBA_ID }}
+          SEOULOUBA_PW: ${{ secrets.SEOULOUBA_PW }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
         run: |
-          if [ -z "$NOTION_TOKEN" ]; then
-            echo "NOTION_TOKEN Secret 이 없어 건너뜁니다. docs/notion-setup.md 를 참고하세요."
-            exit 0
-          fi
-          if [ -z "$REVIEWPLACE_ID" ] || [ -z "$REVIEWPLACE_PW" ]; then
-            echo "리뷰플레이스 계정 Secrets(REVIEWPLACE_ID / REVIEWPLACE_PW)가 없어 건너뜁니다."
+          if [ -z "$NOTION_TOKEN" ] || [ -z "$NOTION_DATABASE_ID" ]; then
+            echo "NOTION_TOKEN / NOTION_DATABASE_ID Secret 이 없어 건너뜁니다. docs/notion-setup.md 를 참고하세요."
             exit 0
           fi
           args=""
           [ "$DRY_RUN" = "true" ] && args="$args --dry-run"
+          # 계정 Secrets 가 없는 사이트는 프로그램이 알아서 '건너뜀'으로 지나갑니다.
           python -m review_campaign_agent collect $args

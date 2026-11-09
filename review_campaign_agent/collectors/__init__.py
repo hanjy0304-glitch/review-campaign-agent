@@ -15,9 +15,22 @@ import httpx
 from ..catalog import Site
 from ..models import Campaign
 from .base import CollectError, Collector, LoginError
+from .dinnerqueen import DinnerqueenCollector
+from .gangnam import GangnamCollector
+from .popomon import PopomonCollector
 from .reviewplace import ReviewplaceCollector
+from .seoulouba import SeouloubaCollector
 
-COLLECTORS: dict[str, type[Collector]] = {c.key: c for c in (ReviewplaceCollector,)}
+COLLECTORS: dict[str, type[Collector]] = {
+    c.key: c
+    for c in (
+        GangnamCollector,
+        DinnerqueenCollector,
+        ReviewplaceCollector,
+        PopomonCollector,
+        SeouloubaCollector,
+    )
+}
 
 OK = "ok"
 SKIPPED = "skipped"

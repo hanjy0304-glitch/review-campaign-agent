@@ -172,8 +172,9 @@ def test_login_failure_raises_without_leaking_credentials():
 
 def test_collect_sites_skips_site_without_credentials():
     reports = collect_sites(load_catalog(), {}, today())
-    assert [r.key for r in reports] == ["reviewplace"]
-    assert reports[0].status == SKIPPED
+    # 수집기가 등록된 사이트는 계정 환경변수가 없으면 '건너뜀'으로 남는다 (설정하지 않은 사용자는 조용히 지나간다).
+    assert [r.key for r in reports] == ["gangnam", "dinnerqueen", "reviewplace", "popomon", "seoulouba"]
+    assert all(r.status == SKIPPED for r in reports)
     assert not has_error(reports)
     assert "건너뜀" in format_reports(reports)[0]
 
