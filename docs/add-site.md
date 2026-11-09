@@ -27,6 +27,24 @@
 6. **기록** — `config/sites.yaml`의 그 사이트 칸을 고칩니다: `adapter: experimental`,
    `login_type`(확인된 것만), `my_applications_url`(확장이 여는 주소).
 
+## 서버(GitHub Actions) 수집기로 추가하기
+
+크롬 확장은 사용자 PC가 켜져 있어야 수집합니다. PC 없이도 돌게 하려면 서버 수집기를 하나 더 만듭니다.
+사이트가 아이디·비밀번호 로그인을 지원하고, **사용자가 자기 계정을 GitHub Secrets 에 등록하는 데 동의한 경우에만** 진행합니다 (규칙 11의 예외, 사용자가 직접 선택한 경우).
+
+1. **로그인 흐름 확인** — 로그인 페이지의 폼 주소·필드 이름과 로그인 후 "선정된 내역" 주소를 확인해 적습니다.
+   비밀번호는 절대 입력해 보지 않고, 공개 페이지에서 폼 구조만 읽습니다.
+2. **수집기 작성** — `review_campaign_agent/collectors/<사이트키>.py` 에 `base.Collector` 하위 클래스를 만듭니다.
+   로그인 세션(쿠키) 유지, 환경변수 읽기(`<KEY>_ID` / `<KEY>_PW`), 계정 값 미출력은 `base.py` 가 맞습니다.
+   파싱은 클래스 이름이 아니라 링크 주소·문구(`D-n`, `오늘마감`)로 카드를 찾습니다 (`reviewplace.py` 참고).
+3. **등록** — `review_campaign_agent/collectors/__init__.py` 의 `COLLECTORS` 에 추가합니다.
+4. **워크플로우** — 수집을 정해진 시간에 자동으로 돌리려면 `.github/workflows/collect.yml` 에 실행 단계를 둡니다.
+   현재 내용은 [collect-workflow.yml](collect-workflow.yml) 에 있고, GitHub App 토큰은 워크플로 파일을 푸시할 권한이 없어서
+   사용자가 GitHub 웹에서 그 내용을 `.github/workflows/collect.yml` 로 한 번 저장하는 방식입니다. env 에 `<KEY>_ID` / `<KEY>_PW` 를 넣습니다.
+5. **테스트** — `tests/test_collector.py` 처럼 `httpx.MockTransport` 로 로그인 성공·실패·파싱을 검증합니다.
+   실제 화면에서 받은 HTML 은 개인정보를 가린 것만 커밋하고, 원본은 `fixtures_private/`(gitignore)에만 둡니다.
+6. **확인** — 사용자가 Secrets 를 등록한 뒤 Actions → **리뷰플레이스 서버 수집** → **Run workflow** 로 먼저 확인합니다(기본값 `확인만`, 표에 저장하지 않음).
+
 ## 다음 후보 (2026-11-06 기준)
 
 - **강남맛집은 파서가 등록돼 있습니다** (`extension/src/gangnam_parse.js`). 2026-11-06 공개 캠페인 목록
