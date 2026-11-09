@@ -30,3 +30,12 @@ test("강남맛집이 목록에 있고 마이페이지를 연다", () => {
   assert.equal(gangnam.origin, "https://xn--939au0g4vj8sq.net");
   assert.equal(gangnam.listUrl, "https://xn--939au0g4vj8sq.net/theme/go/mypage/");
 });
+
+test("포포몬이 목록에 있고 마이페이지를 연다", () => {
+  const popomon = SITES.find((s) => s.key === "popomon");
+  assert.ok(popomon && popomon.name === "포포몬");
+  assert.equal(popomon.origin, "https://popomon.com");
+  assert.equal(popomon.listUrl, "https://popomon.com/next/mypage");
+  assert.equal(popomon.loggedInPrefix, "https://popomon.com/next/mypage");
+});
+

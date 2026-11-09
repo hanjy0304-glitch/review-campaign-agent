@@ -71,10 +71,10 @@ sites:
   - key: popomon
     name: 포포몬
     domain: popomon.com
-    domain_source: search   # 메인 페이지 확인
-    adapter: none
-    login_type: unknown
-    my_applications_url: null
+    domain_source: adapter_tested   # 2026-11-09 공개 페이지·로그인 리다이렉트 실제 접속 확인: popomon.com, /next/login, 마이페이지 /next/mypage
+    adapter: experimental   # 크롬 확장이 마이페이지(/next/mypage)를 읽음. /next/campaign/:id 카드 구조 기반 파서
+    login_type: mixed       # 로그인 페이지(/next/login)에 아이디·비밀번호 + 소셜 간편 로그인
+    my_applications_url: /next/mypage   # 확장이 읽는 마이페이지. 비로그인으로 열면 /next/login?return=... 로 리다이렉트됨 (2026-11-09 확인)
     id_env: POPOMON_ID
     pw_env: POPOMON_PW
 
