@@ -2,7 +2,9 @@
 # domain_source: 도메인을 알게 된 근거. user = 사용자가 직접 제공, search = 웹 검색 결과(직접 접속 테스트 아님),
 #                adapter_tested = 어댑터로 실제 접속 확인됨
 # adapter: none | experimental | stable  (자동 수집 지원 수준. none 이면 Notion에 직접 입력해도 마감 알림은 동일하게 제공)
-#   자동 수집은 현재 크롬 확장(extension/) 방식이다. 새 사이트 추가 절차는 docs/add-site.md 참고.
+#   자동 수집은 크롬 확장(extension/)과 서버 수집기(review_campaign_agent/collectors/) 두 가지다.
+#   서버 수집기는 사용자가 GitHub Secrets 에 그 사이트 계정을 등록했을 때만 돈다(등록하지 않으면 건너뜀).
+#   새 사이트 추가 절차는 docs/add-site.md 참고.
 # login_type: unknown | id_pw | naver | kakao | mixed  (사이트별로 확인되면 기재)
 # my_applications_url: 로그인 후 "내 신청/선정 내역" 페이지 경로 (확인 후 기재)
 # 환경변수 이름은 key 를 대문자로 + _ID / _PW (예: ASSAVIEW_ID). .env.example 참고.
@@ -12,7 +14,7 @@ sites:
     name: 강남맛집
     domain: gangnam-review.net
     domain_source: adapter_tested   # 2026-11-06 공개 페이지 실제 접속 확인(확장 실행은 아직): gangnam-review.net → 강남맛집.net(punycode xn--939au0g4vj8sq.net) 301. 목록 /cp/, 상세 /cp/?id=번호, 로그인 /bbs/login.php, 마이페이지 /theme/go/mypage/
-    adapter: experimental   # 크롬 확장이 마이페이지('나의 캠페인')를 읽음. 2026-11-06 공개 캠페인 목록 카드 구조(/cp/ 목록과 #c_box ul li .textArea) 기반 파서, 로그인 화면 실측은 아직
+    adapter: experimental   # 크롬 확장·서버 수집기(collectors/gangnam.py)가 마이페이지('나의 캠페인')를 읽음. 2026-11-06 공개 캠페인 목록 카드 구조(/cp/ 목록과 #c_box ul li .textArea) 기반 파서, 로그인 화면 실측은 아직. 서버 로그인은 외부에서 접속이 안 돼 미검증
     login_type: mixed       # 로그인 페이지(/bbs/login.php)에 아이디·비밀번호(mb_id·mb_password) + 카카오·네이버·구글 소셜 버튼 확인 (2026-11-06, 공개 페이지)
     my_applications_url: /theme/go/mypage/   # 확장이 읽는 마이페이지. 비로그인으로 열면 alert 뒤 /bbs/login.php 로 replace 된다(2026-11-06 확인)
     id_env: GANGNAM_ID
@@ -32,7 +34,7 @@ sites:
     name: 디너의여왕
     domain: dinnerqueen.net
     domain_source: search   # 플레이스토어 공식 웹사이트 표기
-    adapter: experimental # 크롬 확장이 마이페이지('나의캠페인' 위젯)를 읽음. 2026-11-01 공개 카드 구조 기반 파서, 로그인 화면 실측은 아직
+    adapter: experimental # 크롬 확장·서버 수집기(collectors/dinnerqueen.py)가 마이페이지('나의캠페인' 위젯)를 읽음. 2026-11-01 공개 카드 구조 기반 파서, 로그인 화면 실측은 아직. 서버 로그인 경로(POST /login/proc)는 2026-11-09 실측, 성공 로그인은 미검증
     login_type: mixed       # 로그인 페이지(/login/form_new)에 아이디·비밀번호 + 네이버·카카오·Apple·Google 확인 (2026-10-30, 공개 페이지)
     my_applications_url: /mypage/widget   # 확장이 읽는 마이페이지. 비로그인으로 열면 메인으로 리다이렉트됨(2026-11-01 확인)
     id_env: DINNERQUEEN_ID
@@ -72,7 +74,7 @@ sites:
     name: 포포몬
     domain: popomon.com
     domain_source: adapter_tested   # 2026-11-09 공개 페이지·로그인 리다이렉트 실제 접속 확인: popomon.com, /next/login, 마이페이지 /next/mypage
-    adapter: experimental   # 크롬 확장이 마이페이지(/next/mypage)를 읽음. /next/campaign/:id 카드 구조 기반 파서
+    adapter: experimental   # 크롬 확장이 마이페이지(/next/mypage)를 읽음. 서버 수집기(collectors/popomon.py)는 NextAuth 로그인 후 /api_p/myCampaign/fetch_getContents(JSON)를 읽음. 2026-11-09 로그인 경로·응답 필드는 사이트 프런트엔드 코드로 확인, 실제 응답은 미검증
     login_type: mixed       # 로그인 페이지(/next/login)에 아이디·비밀번호 + 소셜 간편 로그인
     my_applications_url: /next/mypage   # 확장이 읽는 마이페이지. 비로그인으로 열면 /next/login?return=... 로 리다이렉트됨 (2026-11-09 확인)
     id_env: POPOMON_ID
@@ -112,7 +114,7 @@ sites:
     name: 서울오빠
     domain: seoulouba.co.kr
     domain_source: user   # 사용자가 직접 제공한 주소
-    adapter: experimental # 크롬 확장이 마이페이지('내 캠페인')를 읽음. 2026-11-01 공개 캠페인 목록 카드 구조 기반 파서, 로그인 화면 실측은 아직
+    adapter: experimental # 크롬 확장·서버 수집기(collectors/seoulouba.py)가 마이페이지('내 캠페인')를 읽음. 2026-11-01 공개 캠페인 목록 카드 구조 기반 파서, 로그인 화면 실측은 아직. 서버 로그인은 2026-11-09 그누보드 경로·실패 응답 실측, 성공 로그인은 미검증
     login_type: mixed     # 로그인 페이지(/bbs/login.php)에 아이디·비밀번호 + 네이버·카카오 확인 (2026-11-01, 공개 페이지)
     my_applications_url: /mypage/my_campaign.php   # 확장이 읽는 마이페이지. 비로그인으로 열면 로그인 화면으로 리다이렉트됨(2026-11-01 확인)
     id_env: SEOULOUBA_ID
