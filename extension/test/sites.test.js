@@ -19,7 +19,9 @@ test("reviewnote 가 목록에 있다", () => {
 
 test("디너의여왕·리뷰플레이스·서울오빠 가 목록에 있다", () => {
   assert.ok(SITES.some((s) => s.key === "dinnerqueen" && s.name === "디너의여왕"));
-  assert.ok(SITES.some((s) => s.key === "reviewplace" && s.name === "리뷰플레이스"));
+  const rp = SITES.find((s) => s.key === "reviewplace");
+  assert.ok(rp && rp.name === "리뷰플레이스");
+  assert.equal(rp.listUrl, "https://www.reviewplace.co.kr/my/cmp_select.php");
   assert.ok(SITES.some((s) => s.key === "seoulouba" && s.name === "서울오빠"));
 });
 
@@ -30,3 +32,12 @@ test("강남맛집이 목록에 있고 마이페이지를 연다", () => {
   assert.equal(gangnam.origin, "https://xn--939au0g4vj8sq.net");
   assert.equal(gangnam.listUrl, "https://xn--939au0g4vj8sq.net/theme/go/mypage/");
 });
+
+test("포포몬이 목록에 있고 마이페이지를 연다", () => {
+  const popomon = SITES.find((s) => s.key === "popomon");
+  assert.ok(popomon && popomon.name === "포포몬");
+  assert.equal(popomon.origin, "https://popomon.com");
+  assert.equal(popomon.listUrl, "https://popomon.com/next/mypage");
+  assert.equal(popomon.loggedInPrefix, "https://popomon.com/next/mypage");
+});
+

@@ -4,7 +4,17 @@ import { SITES } from "./sites.js";
 import { NotionApi, parseNotionId, syncCards } from "./notion.js";
 
 const ALARM = "collect";
-const PERIOD_MIN = 180;
+const PERIOD_MIN = 30;
+
+let lastCollectAt = 0;
+const THROTTLE_MS = 10 * 60 * 1000;
+
+async function throttledCollect() {
+  const now = Date.now();
+  if (now - lastCollectAt < THROTTLE_MS) return;
+  lastCollectAt = now;
+  await collect();
+}
 
 async function setStatus(status) {
   await chrome.storage.local.set({ status: { ...status, at: new Date().toISOString() } });
@@ -80,6 +90,7 @@ export async function collect() {
 }
 
 chrome.runtime.onInstalled.addListener(() => chrome.alarms.create(ALARM, { periodInMinutes: PERIOD_MIN }));
-chrome.runtime.onStartup.addListener(collect);
-chrome.alarms.onAlarm.addListener((a) => a.name === ALARM && collect());
+chrome.runtime.onStartup.addListener(throttledCollect);
+chrome.windows?.onCreated?.addListener(throttledCollect);
+chrome.alarms.onAlarm.addListener((a) => a.name === ALARM && throttledCollect());
 chrome.runtime.onMessage.addListener((msg) => msg === "collect-now" && collect());
