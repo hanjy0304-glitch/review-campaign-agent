@@ -7,6 +7,7 @@ import { scrapeDinnerqueen } from "./dinnerqueen_parse.js";
 import { scrapeReviewplace } from "./reviewplace_parse.js";
 import { scrapeSeoulouba } from "./seoulouba_parse.js";
 import { scrapeGangnam } from "./gangnam_parse.js";
+import { scrapePopomon } from "./popomon_parse.js";
 
 export const SITES = [
   {
@@ -54,10 +55,20 @@ export const SITES = [
     key: "reviewplace",
     name: "리뷰플레이스",
     origin: "https://www.reviewplace.co.kr",
-    // 마이페이지('내 캠페인' 탭). 로그인 없이 열면 로그인 화면(/bbs/login.php)으로 넘어간다.
-    listUrl: "https://www.reviewplace.co.kr/my/",
+    // 마이페이지('선정된 캠페인'). 로그인 없이 열면 로그인 화면(/bbs/login.php)으로 넘어간다.
+    listUrl: "https://www.reviewplace.co.kr/my/cmp_select.php",
     loggedInPrefix: "https://www.reviewplace.co.kr/my/",
     loginRequiredMessage: "리뷰플레이스 로그인이 필요합니다. 크롬에서 리뷰플레이스에 로그인해 주세요.",
     scrape: scrapeReviewplace,
+  },
+  {
+    key: "popomon",
+    name: "포포몬",
+    origin: "https://popomon.com",
+    // 마이페이지. 로그인 없이 열면 /next/login?return=... 로 리다이렉트된다.
+    listUrl: "https://popomon.com/next/mypage",
+    loggedInPrefix: "https://popomon.com/next/mypage",
+    loginRequiredMessage: "포포몬 로그인이 필요합니다. 크롬에서 포포몬에 로그인해 주세요.",
+    scrape: scrapePopomon,
   },
 ];

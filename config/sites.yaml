@@ -42,9 +42,9 @@ sites:
     name: 리뷰플레이스
     domain: reviewplace.co.kr
     domain_source: search   # 앱스토어 등록 정보
-    adapter: experimental # 크롬 확장이 마이페이지(my/)를 읽음. 2026-11-01 공개 카드 구조 기반 파서, 로그인 화면 실측은 아직
+    adapter: experimental # 크롬 확장이 마이페이지('선정된 캠페인')를 읽음. 2026-11-09 사용자 실측 URL 반영
     login_type: mixed       # 로그인 페이지(/bbs/login.php)에 아이디·비밀번호 + 네이버·Apple 소셜 링크 확인 (2026-10-30, 공개 페이지)
-    my_applications_url: /my/   # 확장이 읽는 마이페이지('내 캠페인' 탭). 비로그인으로 열면 로그인 화면으로 넘어감(2026-11-01 확인)
+    my_applications_url: /my/cmp_select.php   # 확장이 읽는 마이페이지('선정된 캠페인'). 비로그인으로 열면 로그인 화면으로 넘어감(2026-11-09 확인)
     id_env: REVIEWPLACE_ID
     pw_env: REVIEWPLACE_PW
 
@@ -71,10 +71,10 @@ sites:
   - key: popomon
     name: 포포몬
     domain: popomon.com
-    domain_source: search   # 메인 페이지 확인
-    adapter: none
-    login_type: unknown
-    my_applications_url: null
+    domain_source: adapter_tested   # 2026-11-09 공개 페이지·로그인 리다이렉트 실제 접속 확인: popomon.com, /next/login, 마이페이지 /next/mypage
+    adapter: experimental   # 크롬 확장이 마이페이지(/next/mypage)를 읽음. /next/campaign/:id 카드 구조 기반 파서
+    login_type: mixed       # 로그인 페이지(/next/login)에 아이디·비밀번호 + 소셜 간편 로그인
+    my_applications_url: /next/mypage   # 확장이 읽는 마이페이지. 비로그인으로 열면 /next/login?return=... 로 리다이렉트됨 (2026-11-09 확인)
     id_env: POPOMON_ID
     pw_env: POPOMON_PW
 
