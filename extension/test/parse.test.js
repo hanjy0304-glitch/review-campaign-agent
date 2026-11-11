@@ -36,3 +36,15 @@ test("D-day 와 마감 지난 표기를 읽는다", async () => {
   const cards = await run(html);
   assert.deepEqual(cards.map((c) => c.daysLeft), [0, -2]);
 });
+
+test("선정 전 '신청' 상태인 카드는 제외한다", async () => {
+  const html = `<div><span>#3000001</span><button>취소</button><span>3 일 남음</span><span>신청 1254 / 5</span><a href="/campaigns/3000001">신청한 체험단</a></div>
+                <div><span>#3000002</span><button>취소</button><span>오늘 선정 마감</span><a href="/campaigns/3000002">오늘 마감 체험단</a></div>
+                <div><span>#3000003</span><a href="/campaigns/3000003"><b>D-5</b> 리뷰 등록</a><a href="/campaigns/3000003">선정된 체험단</a></div>`;
+  const cards = await run(html);
+  assert.equal(cards.length, 1);
+  assert.equal(cards[0].campaignId, "3000003");
+  assert.equal(cards[0].title, "선정된 체험단");
+  assert.equal(cards[0].daysLeft, 5);
+});
+

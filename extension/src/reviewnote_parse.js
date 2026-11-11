@@ -28,11 +28,19 @@ export async function scrapeReviewnote(options = {}) {
     const out = [];
     for (const [id, { el, anchors }] of cards) {
       const text = norm(el.textContent);
+      // '신청' 상태(취소 버튼, 선정 마감 대기)이거나 마감일 표기가 없는 카드는 선정된 진행중 캠페인이 아니므로 제외한다
+      if (text.includes("취소") || /선정\s*마감|\d+\s*일\s*남음/.test(text)) {
+        continue;
+      }
       let daysLeft = null;
       let m = text.match(/D\s*-\s*(\d+)/);
       if (m) daysLeft = Number(m[1]);
       else if (/D\s*-\s*day/i.test(text)) daysLeft = 0;
       else if ((m = text.match(/D\s*\+\s*(\d+)/))) daysLeft = -Number(m[1]);
+      if (daysLeft == null) {
+        // D-n 표기가 없는 카드는 진행중 캠페인이 아니다
+        continue;
+      }
       const titleAnchor = anchors.find((a) => norm(a.textContent) && !/D\s*[-+]/.test(norm(a.textContent)));
       const title = norm(titleAnchor ? titleAnchor.textContent : "");
       const provided = norm((el.querySelector(".truncate") || {}).textContent);
