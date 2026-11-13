@@ -142,6 +142,20 @@ def test_parse_campaigns_without_cards_returns_empty():
     assert parse_campaigns(GATE_HTML, today()) == []
 
 
+def test_parse_campaigns_skips_cards_without_dday_or_applied():
+    html = """
+    <html><body>
+      <div class="item"><a href="/pr/?id=999001"><p class="tit">신청한 캠페인</p><button>취소</button><p>발표 3일 남음</p></a></div>
+      <div class="item"><a href="/pr/?id=999002"><p class="tit">마감일 없는 캠페인</p></a></div>
+      <div class="item"><a href="/pr/?id=999003"><p class="tit">선정된 캠페인</p><p class="date">D - 4</p></a></div>
+    </body></html>
+    """
+    camps = parse_campaigns(html, today())
+    assert len(camps) == 1
+    assert camps[0].campaign_id == "999003"
+    assert camps[0].title == "선정된 캠페인"
+
+
 def test_looks_like_login_page():
     assert looks_like_login_page(GATE_HTML)
     assert looks_like_login_page(LOGIN_PAGE)

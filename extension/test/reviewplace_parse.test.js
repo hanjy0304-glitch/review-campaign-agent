@@ -36,3 +36,22 @@ test("리뷰플레이스: 신청수 문단을 제공내역로 읽지 않는다",
   assert.equal(cards[0].provided, "");
   assert.equal(cards[0].daysLeft, 1);
 });
+
+test("리뷰플레이스: 마감일(D-n) 표기가 없거나 선정 전 '신청' 상태인 카드는 제외한다", async () => {
+  const html = `<div class="item"><a href="/pr/?id=313539">
+    <div class="txt_wrap"><p class="tit">신청한 캠페인</p></div>
+    <div class="date_wrap"><button>취소</button><p>발표 3일 남음</p></div></a></div>
+  <div class="item"><a href="/pr/?id=313540">
+    <div class="txt_wrap"><p class="tit">선정 마감 대기 캠페인</p></div>
+    <div class="date_wrap"><p>오늘 선정 마감</p></div></a></div>
+  <div class="item"><a href="/pr/?id=313541">
+    <div class="txt_wrap"><p class="tit">마감일 없는 배너 링크</p></div></a></div>
+  <div class="item"><a href="/pr/?id=313542">
+    <div class="txt_wrap"><p class="tit">진짜 선정된 캠페인</p></div>
+    <div class="date_wrap"><p class="date"><em class="d_ico">D</em> - 5</p></div></a></div>`;
+  const cards = await run(html);
+  assert.equal(cards.length, 1);
+  assert.equal(cards[0].campaignId, "313542");
+  assert.equal(cards[0].title, "진짜 선정된 캠페인");
+  assert.equal(cards[0].daysLeft, 5);
+});

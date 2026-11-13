@@ -110,6 +110,7 @@ export async function syncCards(api, cards, site, now = new Date()) {
   const today = todayKst(now);
   const result = { added: 0, updated: 0, unchanged: 0 };
   for (const card of cards) {
+    if (card.daysLeft == null) continue;
     const row = toRow(card, today, site);
     const page = await api.findByKey(row.key);
     if (!page) {
@@ -123,7 +124,7 @@ export async function syncCards(api, cards, site, now = new Date()) {
     const changes = {};
     const props = page.properties || {};
     if (row.deadline && (props["글마감일"]?.date?.start || null) !== row.deadline) changes["글마감일"] = date(row.deadline);
-    if ((props["선정상태"]?.select?.name || null) !== "선정") changes["선정상태"] = select("선정");
+    if (card.daysLeft != null && (props["선정상태"]?.select?.name || null) !== "선정") changes["선정상태"] = select("선정");
     if (Object.keys(changes).length) {
       await api.request("PATCH", `/pages/${page.id}`, { properties: changes });
       result.updated++;

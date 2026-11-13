@@ -33,11 +33,19 @@ export async function scrapeReviewplace(options = {}) {
     const out = [];
     for (const [id, { el, href }] of cards) {
       const text = norm(el.textContent);
+      // '신청' 상태(취소 버튼, 선정 마감 대기)이거나 마감일 표기가 없는 카드는 선정된 진행중 캠페인이 아니므로 제외한다
+      if (text.includes("취소") || /선정\s*마감|\d+\s*일\s*남음/.test(text)) {
+        continue;
+      }
       let daysLeft = null;
       let m = text.match(/D\s*-\s*(\d+)/);
       if (m) daysLeft = Number(m[1]);
       else if (/오늘\s*마감/.test(text)) daysLeft = 0;
       else if ((m = text.match(/D\s*\+\s*(\d+)/))) daysLeft = -Number(m[1]);
+      if (daysLeft == null) {
+        // D-n 표기가 없는 카드는 진행중 캠페인이 아니다
+        continue;
+      }
       // 제목·제공내역은 문단 순서대로: 첫 문단이 제목, 그 다음이 제공내역(마감·신청수 문단 제외).
       const paras = [...el.querySelectorAll("p")].map((p) => norm(p.textContent)).filter(Boolean);
       const title = paras[0] || "";

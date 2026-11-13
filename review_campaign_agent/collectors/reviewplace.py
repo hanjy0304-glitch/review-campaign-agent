@@ -96,8 +96,13 @@ def parse_campaigns(html: str, today: date) -> list[Campaign]:
             continue
         seen.add(campaign_id)
         card = _card_for(anchor)
+        card_text = _norm(card.get_text(" "))
+        if "취소" in card_text or re.search(r"선정\s*마감|\d+\s*일\s*남음", card_text):
+            continue
+        left = days_left(card_text)
+        if left is None:
+            continue
         title, _provided = _title_and_provided(card)
-        left = days_left(_norm(card.get_text(" ")))
         campaigns.append(
             Campaign(
                 site=KEY,
@@ -106,7 +111,7 @@ def parse_campaigns(html: str, today: date) -> list[Campaign]:
                 status=Status.SELECTED,
                 kind=next((k for k in KINDS if k in title), None),
                 selected_at=today,
-                review_deadline=today + timedelta(days=left) if left is not None else None,
+                review_deadline=today + timedelta(days=left),
                 url=ORIGIN + _path(href),
                 site_name=NAME,
             )
